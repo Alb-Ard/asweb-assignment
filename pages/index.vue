@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import Place from "~/lib/types/place";
+import axios from "axios";
 
 const places = [
     {
@@ -49,6 +50,14 @@ const focusedPlaceIndex = ref<number | undefined>(undefined);
 const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined ? places[focusedPlaceIndex.value] : undefined);
 
 const setFocusedPlaceIndex = (index: number | undefined) => focusedPlaceIndex.value = index;
+
+onMounted(() => {
+    axios.put(location.hostname + ":3001/api/user/register", {
+        name: "test",
+        email: "foo@bar.com",
+        password: "test"
+    }).then(response => console.log(response.statusText));
+})
 </script>
 
 <style scoped>
