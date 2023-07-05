@@ -13,6 +13,7 @@
             <header>
                 <h3>Details</h3>
             </header>
+            <p>Owner: {{ place.owner.name }}</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem nemo, amet recusandae similique labore quasi error harum, repellendus nesciunt ab maxime asperiores corrupti sed sint iusto, maiores molestias culpa blanditiis.</p>
         </section>
         <section>
@@ -73,6 +74,10 @@ article > header {
 }
 
 section > section {
+    margin-top: 1rem;
+}
+
+section > p {
     margin-top: 1rem;
 }
 

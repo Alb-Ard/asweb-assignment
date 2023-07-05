@@ -1,6 +1,11 @@
 <template>
     <header class="main-header">
         <h1>Explorer</h1>
+        <Button v-if="!!!userStore.userData" v-on:click="testLogin">Log in as Test</Button>
+        <div v-else>
+            <p>{{ userStore.userData.username }}</p>
+            <Button v-on:click="testLogout" >Logout</Button>
+        </div>
     </header>
     <main v-bind:class="!!focusedPlace ? 'place-focused' : ''">
         <div class="places-sidebar-section">
@@ -29,41 +34,65 @@
 
 <script setup lang="ts">
 import Place from "~/lib/types/place";
+import User from "~/lib/types/user";
 import axios from "axios";
 
 const places = [
     {
+        id: "0",
         name: "Place 0",
-        location: [47.41322, -1.219482] as [number, number]
+        owner: { id: "0", name: "Dave" },
+        location: [47.41322, -1.219482] as [number, number],
+        photoSrcs: [],
+        reviews: [],
     },
     {
+        id: "1",
         name: "Place 1",
-        location: [47.42022, -1.219482] as [number, number]
+        owner: { id: "0", name: "Luis" },
+        location: [47.42022, -1.219482] as [number, number],
+        photoSrcs: [],
+        reviews: [],
     },
     {
+        id: "2",
         name: "Place 2",
-        location: [47.41322, -1.210482] as [number, number]
+        owner: { id: "0", name: "Rob" },
+        location: [47.41322, -1.210482] as [number, number],
+        photoSrcs: [],
+        reviews: [],
     }
 ] as Place[];
 
 const focusedPlaceIndex = ref<number | undefined>(undefined);
 const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined ? places[focusedPlaceIndex.value] : undefined);
+const userStore = useUserStore();
 
 const setFocusedPlaceIndex = (index: number | undefined) => focusedPlaceIndex.value = index;
 
-onMounted(() => {
-    axios.put(location.hostname + ":3001/api/user/register", {
-        name: "test",
+const testLogin = async () => {
+    const response = await axios.post<User>("http://" + location.hostname + ":3001/api/user/login", {
         email: "foo@bar.com",
         password: "test"
-    }).then(response => console.log(response.statusText));
-})
+    });
+    if (response.status === 200) {
+        userStore.changeUser(response.data);
+    } else {
+        userStore.changeUser(null);
+        console.error(response.statusText);
+    }
+}
+
+const testLogout = async () => {
+    const response = await axios.get("http://" + location.hostname + ":3001/api/user/logout");
+    userStore.changeUser(null);
+};
 </script>
 
 <style scoped>
 * {
     --show-place-info-duration: 150ms;
-    --header-height: 3rem;
+    --header-height: 9rem;
 }
 
 main {
@@ -79,6 +108,7 @@ main.place-focused {
 
 .main-header {
     height: var(--header-height);
+    padding: 2rem;
 }
 
 .places-sidebar-section {
