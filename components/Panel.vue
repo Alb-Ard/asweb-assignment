@@ -9,17 +9,17 @@
 <script setup lang="ts">
 import { Color, ColorLevel, Radius } from "~/lib/types/commonComponentPropTypes";
 
-const { level, color, radius, style } = defineProps<{
+const props = defineProps<{
     level?: ColorLevel,
     color?: Color
     radius?: Radius,
     style?: string | string[]
 }>();
 
-const backgroundColor = `--background-color: var(--color-${color ?? "grey"}-${level ?? "200"})`;
-const borderRadius = `--border-radius: ${Number.parseInt(radius ?? "1") / 2}rem`;
-const textColor = `--color: var(--color-on-${level ?? "200"})`;
-const instanceStyles = style instanceof Array ? style : [style ?? ""];
+const backgroundColor = computed(() => `--background-color: var(--color-${props.color ?? "grey"}-${props.level ?? "200"})`);
+const borderRadius = computed(() => `--border-radius: ${Number.parseInt(props.radius ?? "1") / 2}rem`);
+const textColor = computed(() => `--color: var(--color-on-${props.level ?? "200"})`);
+const instanceStyles = computed(() => props.style instanceof Array ? props.style : [props.style ?? ""]);
 </script>
 
 <style scoped>

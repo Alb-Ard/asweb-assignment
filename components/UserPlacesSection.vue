@@ -4,7 +4,7 @@
             <h2>Places</h2>
         </header>
         <ol>
-            <li v-for="(place, placeIndex) in places">
+            <li v-for="(place, placeIndex) in places" v-bind:key="place.id">
                 <Button v-bind:full-width="true" v-on:click="handlePlaceClicked(placeIndex)">
                     {{ place.name }}
                     <img v-bind:src="`https://picsum.photos/id/${placeIndex + 100}/200`" />

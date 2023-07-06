@@ -1,15 +1,15 @@
 interface Place {
-    id: string,
-    owner: PlaceOwner
-    name: string,
-    location: [number, number],
-    photoSrcs: string[],
-    reviews: string[],
+    readonly id: string,
+    readonly owner: PlaceOwner
+    readonly name: string,
+    readonly location: [number, number],
+    readonly photoSrcs: string[],
+    readonly reviews: string[],
 };
 
 interface PlaceOwner {
-    id: string,
-    name: string,
+    readonly id: string,
+    readonly name: string,
 }
 
 export default Place;

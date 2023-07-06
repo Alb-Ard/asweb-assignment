@@ -7,14 +7,13 @@
         <input type="password" placeholder="Insert your mail here">
         </div>
         <Button class="sendData">Register</Button>
-        <NuxtLink class="changePage" to="login">Already registered? Click here!</NuxtLink>
+        <ButtonLink class="changePage" to="/login">Already registered? Click here!</ButtonLink>
     </Panel>  
 </template>
 
 <style scoped>
 
     .loginPage {
-        margin: 150px;
         margin-left: 200px;
         margin-right: 200px;
     }
@@ -23,7 +22,7 @@
     }
     .sendData {
         margin: auto;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
     input{
         margin-left: 41%;
@@ -43,6 +42,7 @@
     .changePage {
         color: white;
         background-color: grey;
-        margin-left:40%;
+        margin-left:30%;
+        margin-right: 30%;
     }
 </style>

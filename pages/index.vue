@@ -33,72 +33,25 @@
 </template>
 
 <script setup lang="ts">
-import Place from "~/lib/types/place";
-import User from "~/lib/types/user";
-import axios from "axios";
-
-const places = [
-    {
-        id: "0",
-        name: "Place 0",
-        owner: { id: "0", name: "Dave" },
-        location: [47.41322, -1.219482] as [number, number],
-        photoSrcs: [],
-        reviews: [],
-    },
-    {
-        id: "1",
-        name: "Place 1",
-        owner: { id: "0", name: "Luis" },
-        location: [47.42022, -1.219482] as [number, number],
-        photoSrcs: [],
-        reviews: [],
-    },
-    {
-        id: "2",
-        name: "Place 2",
-        owner: { id: "0", name: "Rob" },
-        location: [47.41322, -1.210482] as [number, number],
-        photoSrcs: [],
-        reviews: [],
-    }
-] as Place[];
-
+const placesStore = usePlacesStore();
+const places = computed(() => placesStore.places);
 const focusedPlaceIndex = ref<number | undefined>(undefined);
-const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined ? places[focusedPlaceIndex.value] : undefined);
-const userStore = useUserStore();
+const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined && !!places.value ? places.value[focusedPlaceIndex.value] : undefined);
 
 const setFocusedPlaceIndex = (index: number | undefined) => focusedPlaceIndex.value = index;
 
-const testLogin = async () => {
-    const response = await axios.post<User>("http://" + location.hostname + ":3001/api/user/login", {
-        email: "foo@bar.com",
-        password: "test"
-    });
-    if (response.status === 200) {
-        userStore.changeUser(response.data);
-    } else {
-        userStore.changeUser(null);
-        console.error(response.statusText);
-    }
-}
-
-const testLogout = async () => {
-    const response = await axios.get("http://" + location.hostname + ":3001/api/user/logout");
-    userStore.changeUser(null);
-};
+onMounted(() => placesStore.fetchAsync(0));
 </script>
 
 <style scoped>
 * {
     --show-place-info-duration: 150ms;
-    --header-height: 9rem;
 }
 
 main {
     display: grid;
+    height: 100%;
     grid-template-columns: 16rem 1fr;
-    height: calc(100svh - var(--header-height));
     transition: grid-template-columns var(--show-place-info-duration) var(--show-place-info-duration) ease-in-out;
 }
 
@@ -106,14 +59,14 @@ main.place-focused {
     grid-template-columns: 32rem 1fr;
 }
 
-.main-header {
-    height: var(--header-height);
-    padding: 2rem;
+section,
+.places-sidebar {
+    height: 100%;
 }
 
-.places-sidebar-section {
+.places-sidebar {
     padding: 1rem;
-    overflow-y: scroll;
+    overflow: auto;
 }
 
 .v-enter-active,
@@ -124,5 +77,15 @@ main.place-focused {
 .v-enter-from,
 .v-leave-to {
   translate: -100% 0 0;
+}
+
+@media screen and (width <= 1024px) {
+    main {
+        grid-template-columns: 0 1fr;
+    }
+
+    main.place-focused {
+        grid-template-columns: 1fr 0;
+    }
 }
 </style>
