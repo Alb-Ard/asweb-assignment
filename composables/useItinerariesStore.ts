@@ -1,3 +1,4 @@
+import axios from "axios";
 import { defineStore } from "pinia";
 import Itinerary from "~/lib/types/itinerary";
 
@@ -37,7 +38,7 @@ export const useItinerariesStore = defineStore("itineraries", () => {
             }
         ];
 
-        itineraries.value = [
+        const newItineraries = [
             {
                 id: "0",
                 name: "Trip 1",
@@ -54,6 +55,32 @@ export const useItinerariesStore = defineStore("itineraries", () => {
                 places: [...itineraryPlaces],
             }
         ];
+
+        if (!!!itineraries.value) {
+            itineraries.value = [...newItineraries];
+        } else {
+            newItineraries.forEach(addItinerary);
+        }
+    }
+
+    const fetchOneAsync = async (id: string) => {
+        // TODO: fetch
+    }
+
+    const swapPlacesAsync = async (itineraryId: string, firstId: string, secondId: string) => {
+        // TODO: swap and fetch again
+    }
+
+    const addItinerary = (newItinerary: Itinerary) => {
+        if (!!!itineraries.value) {
+            itineraries.value = [];
+        }
+        const existingItinerary = itineraries.value.find(i => i.id === newItinerary.id);
+        if (!!existingItinerary) {
+            Object.assign(existingItinerary, newItinerary);
+        } else {
+            itineraries.value.push(newItinerary);
+        }
     }
 
     watchEffect(() => {
@@ -64,6 +91,8 @@ export const useItinerariesStore = defineStore("itineraries", () => {
 
     return {
         itineraries: computed(() => itineraries.value),
-        fetchAsync
+        fetchAsync,
+        fetchOneAsync,
+        swapPlacesAsync,
     };
 });

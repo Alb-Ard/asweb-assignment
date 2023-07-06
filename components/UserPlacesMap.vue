@@ -32,7 +32,7 @@ export interface MapPlace {
     readonly location: [number, number],
 }
 
-const { places, focusablePlaces, showPlacesNames, focusedIndex } = defineProps<{
+const props = defineProps<{
     places: MapPlace[],
     focusablePlaces?: boolean,
     showPlacesNames?: boolean,
@@ -40,16 +40,16 @@ const { places, focusablePlaces, showPlacesNames, focusedIndex } = defineProps<{
 }>();
 
 const tooltipOptions: TooltipOptions = {
-    permanent: showPlacesNames,
+    permanent: props.showPlacesNames,
     direction: "right"
 };
 
-const focusedPlace = computed(() => !!focusedIndex ? places[focusedIndex] : null);
+const focusedPlace = computed(() => !!props.focusedIndex ? props.places[props.focusedIndex] : null);
 
 const emit = defineEmits<{
     (event: "placeFocused", placeIndex: number): void
 }>();
 
-const handlePlaceClicked = (placeIndex: number) => (focusablePlaces ?? true) && emit("placeFocused", placeIndex);
+const handlePlaceClicked = (placeIndex: number) => (props.focusablePlaces ?? true) && emit("placeFocused", placeIndex);
 
 </script>

@@ -1,38 +1,31 @@
+import axios from "axios";
 import { defineStore } from "pinia";
+import { getApiUrl } from "~/lib/api";
 import Place from "~/lib/types/place";
 
 export const usePlacesStore = defineStore("places", () => { 
     const places = ref<Place[] | undefined>(undefined);
 
     const fetchAsync = async (page: number) => {
-        places.value = [
-            {
-                id: "0",
-                name: "Place 0",
-                owner: { id: "0", name: "Dave" },
-                location: [47.41322, -1.219482] as [number, number],
-                photoSrcs: [],
-                reviews: [],
-            },
-            {
-                id: "1",
-                name: "Place 1",
-                owner: { id: "1", name: "Luis" },
-                location: [47.42022, -1.219482] as [number, number],
-                photoSrcs: [],
-                reviews: [],
-            },
-            {
-                id: "2",
-                name: "Place 2",
-                owner: { id: "2", name: "Rob" },
-                location: [47.41322, -1.210482] as [number, number],
-                photoSrcs: [],
-                reviews: [],
-            }
-        ];
+        const response = await axios.get<Place[]>(getApiUrl("place") + "?page=" + page);
+        if (response.status !== 200) {
+            return;
+        }
+        response.data.forEach(addPlace);
     };
-    
+
+    const addPlace = (newPlace: Place) => {
+        if (!!!places.value) {
+            places.value = [];
+        }
+        const existingPlace = places.value.find(i => i.id === newPlace.id);
+        if (!!existingPlace) {
+            Object.assign(existingPlace, newPlace);
+        } else {
+            places.value.push(newPlace);
+        }
+    }
+
     return {
         places: computed(() => places.value),
         fetchAsync,

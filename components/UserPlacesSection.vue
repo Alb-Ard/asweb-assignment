@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import Place from "~/lib/types/place";
 
-const { places } = defineProps<{
+defineProps<{
     places: Place[],
 }>();
 

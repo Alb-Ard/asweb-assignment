@@ -64,17 +64,16 @@ const itineraryId = ref(route.params.id as string);
 const itinerary = computed(() => itineraries.value?.find(i => i.id === itineraryId.value));
 const listExpanded = ref(false);
 
-const handlePlacesReordered = (draggedPlace: MapPlace, targetPlace: MapPlace) => {
+const handlePlacesReorderedAsync = async (draggedPlace: MapPlace, targetPlace: MapPlace) => {
     if (!!!itinerary.value?.places) {
         return;
     }
-    //itinerary.value.places = itinerary.value.places.filter(p => p.id !== draggedPlace.id);
-    //itinerary.value.places.splice(itinerary.value.places.indexOf(targetPlace), 0, draggedPlace);
+    await itinerariesStore.swapPlacesAsync(itineraryId.value, draggedPlace.id, targetPlace.id);
 }
 
-const dragDrop = useDragDrop("itineraryPlace", handlePlacesReordered);
+const dragDrop = useDragDrop("itineraryPlace", handlePlacesReorderedAsync);
 
-onMounted(() => itinerariesStore.fetchAsync(0));
+watchEffect(() => itinerariesStore.fetchOneAsync(itineraryId.value));
 </script>
 
 <style scoped>

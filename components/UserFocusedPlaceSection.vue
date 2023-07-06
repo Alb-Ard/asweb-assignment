@@ -13,8 +13,8 @@
             <header>
                 <h3>Details</h3>
             </header>
-            <p>Owner: {{ place.owner.name }}</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem nemo, amet recusandae similique labore quasi error harum, repellendus nesciunt ab maxime asperiores corrupti sed sint iusto, maiores molestias culpa blanditiis.</p>
+            <p>Owner: {{ place.owner.username }}</p>
+            <p>{{ place.description }}</p>
         </section>
         <section>
             <header>
@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import Place from "~/lib/types/place";
 
-const { place } = defineProps<{
+defineProps<{
     place: Place,
 }>();
 

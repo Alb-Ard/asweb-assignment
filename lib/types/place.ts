@@ -2,6 +2,7 @@ interface Place {
     readonly id: string,
     readonly owner: PlaceOwner
     readonly name: string,
+    readonly description: string,
     readonly location: [number, number],
     readonly photoSrcs: string[],
     readonly reviews: string[],
@@ -9,7 +10,7 @@ interface Place {
 
 interface PlaceOwner {
     readonly id: string,
-    readonly name: string,
+    readonly username: string,
 }
 
 export default Place;
