@@ -8,9 +8,9 @@
                 <RouterLink to="/itineraries" class="nav-link">Itineraries</RouterLink>
             </li>
             <li>
-                <Button v-if="!!!userStore.userData" v-on:click="testLogin">Log in as Test</Button>
+                <Button v-if="!!!authentication.userStore.userData" v-on:click="testLogin">Log in as Test</Button>
                 <div v-else>
-                    <p>{{ userStore.userData.username }}</p>
+                    <p>{{ authentication.userStore.userData.username }}</p>
                     <Button v-on:click="testLogout">Logout</Button>
                 </div>
             </li>
@@ -19,28 +19,12 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import User from "~/lib/types/user";
+import useAuthentication from "~/composables/useAuthentication";
 
-const userStore = useUserStore();
+const authentication = useAuthentication();
 
-const testLogin = async () => {
-    const response = await axios.post<User>("http://" + location.hostname + ":3001/api/user/login", {
-        email: "foo@bar.com",
-        password: "test"
-    });
-    if (response.status === 200) {
-        userStore.changeUser(response.data);
-    } else {
-        userStore.changeUser(null);
-        console.error(response.statusText);
-    }
-}
-
-const testLogout = async () => {
-    const response = await axios.get("http://" + location.hostname + ":3001/api/user/logout");
-    userStore.changeUser(null);
-};
+const testLogin = async () => await authentication.login("foo@bar.com", "test");
+const testLogout = async () => await authentication.logout();
 </script>
 
 <style scoped>

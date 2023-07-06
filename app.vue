@@ -11,21 +11,11 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import User from "~/lib/types/user";
+import useAuthentication from "~/composables/useAuthentication";
 
-onMounted(() => {
-    const renewSession = async () => {
-        const response = await axios.get<User>("http://" + location.hostname + ":3001/api/user/renew");
-        if (response.status === 200) {
-            useUserStore().changeUser(response.data);
-        } else {
-            console.log(response.statusText);
-        }
-    }
+const authentication = useAuthentication();
 
-    renewSession();
-})
+onMounted(() => authentication.renew());
 </script>
 
 <style scoped>
