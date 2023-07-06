@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { DoughnutChart } from 'vue-chart-3';
-import {Chart, ChartData, registerables} from "chart.js";
+import {defineChartComponent} from 'vue-chart-3';
+import {Chart, ChartData, ChartTypeRegistry, registerables} from "chart.js";
 import {integer} from "vscode-languageserver-types";
 
 
 Chart.register(...registerables);
 
 const props =defineProps<{
-  dataValues: Array<integer>
+  dataValues: Array<integer>,
+  chartName: string,
+  chartType: keyof ChartTypeRegistry
 }>();
 
 
 const dataLabels = ['5', '4', '3', '2', '1'].map(x => x + " star");
 
+const ChartJs = defineChartComponent(props.chartName, props.chartType)
 
 
 const testData: ChartData = ref({
@@ -26,12 +29,14 @@ const testData: ChartData = ref({
 });
 
 
+
+
 </script>
 
 
 
 <template>
-  <DoughnutChart :chartData = "testData"></DoughnutChart>
+  <ChartJs :chartData = "testData"></ChartJs>
 </template>
 
 <style scoped>
