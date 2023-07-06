@@ -7,11 +7,11 @@
             <li>
                 <RouterLink to="/itineraries" class="nav-link">Itineraries</RouterLink>
             </li>
-            <li>
-                <Button v-if="!!!authentication.userStore.userData" v-on:click="testLogin">Log in as Test</Button>
+            <li v-if="showLogin">
+                <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>
                 <div v-else>
                     <p>{{ authentication.userStore.userData.username }}</p>
-                    <Button v-on:click="testLogout">Logout</Button>
+                    <Button v-on:click="logout">Logout</Button>
                 </div>
             </li>
         </ul>
@@ -19,12 +19,11 @@
 </template>
 
 <script setup lang="ts">
-import useAuthentication from "~/composables/useAuthentication";
-
 const authentication = useAuthentication();
+const route = useRoute();
+const showLogin = computed(() => !route.path.includes("/login") && !route.path.includes("/register"));
 
-const testLogin = async () => await authentication.login("foo@bar.com", "test");
-const testLogout = async () => await authentication.logout();
+const logout = async () => await authentication.logout();
 </script>
 
 <style scoped>
@@ -40,7 +39,7 @@ li {
     column-gap: 1rem;
 }
 
-li:last-child {
+li:nth-child(3) {
     margin-left: auto;
 }
 
