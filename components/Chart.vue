@@ -1,24 +1,30 @@
 <script setup lang="ts">
 import { DoughnutChart } from 'vue-chart-3';
-import { Chart, registerables } from "chart.js";
+import {Chart, ChartData, registerables} from "chart.js";
+import {integer} from "vscode-languageserver-types";
 
 
 Chart.register(...registerables);
 
-const dataValues = ref([3, 4, 1, 6, 8]);
-const dataLabels = ref(['5', '4', '3', '2', '1']);
+const props =defineProps<{
+  dataValues: Array<integer>
+}>();
+
+
+const dataLabels = ['5', '4', '3', '2', '1'].map(x => x + " star");
 
 
 
-const testData = reactive({
-  labels: dataLabels.value,
+const testData: ChartData = ref({
+  labels: dataLabels,
   datasets: [
     {
-      data: dataValues.value,
+      data: props.dataValues,
       backgroundColor: ['blue', 'red', 'white', 'green', 'yellow'],
     },
   ],
 });
+
 
 </script>
 

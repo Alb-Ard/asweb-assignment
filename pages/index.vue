@@ -1,13 +1,14 @@
 <script setup lang="ts">
 
-import Chart from "~/pages/Chart.vue";
+import Chart from "~/components/Chart.vue";
+
+const data = ref([3, 4, 1, 6, 8]);
 </script>
 
 
 
 <template>
-  <p>CIAO</p>
-  <Chart></Chart>
+  <Chart :data-values="data"></Chart>
 </template>
 
 <style scoped>
