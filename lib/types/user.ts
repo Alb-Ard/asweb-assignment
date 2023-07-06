@@ -1,7 +1,7 @@
 interface User {
-    id: string,
-    username: string,
-    email: string,
+    readonly id: string,
+    readonly username: string,
+    readonly email: string,
 }
 
 export default User;

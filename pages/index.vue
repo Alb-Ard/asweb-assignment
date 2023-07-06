@@ -1,14 +1,6 @@
 <template>
-    <header class="main-header">
-        <h1>Explorer</h1>
-        <Button v-if="!!!userStore.userData" v-on:click="testLogin">Log in as Test</Button>
-        <div v-else>
-            <p>{{ userStore.userData.username }}</p>
-            <Button v-on:click="testLogout" >Logout</Button>
-        </div>
-    </header>
     <main v-bind:class="!!focusedPlace ? 'place-focused' : ''">
-        <div class="places-sidebar-section">
+        <div class="places-sidebar">
             <Transition mode="out-in">
                 <UserPlacesSection
                     v-if="!!!focusedPlace"
@@ -34,8 +26,6 @@
 
 <script setup lang="ts">
 import Place from "~/lib/types/place";
-import User from "~/lib/types/user";
-import axios from "axios";
 
 const places = [
     {
@@ -66,39 +56,19 @@ const places = [
 
 const focusedPlaceIndex = ref<number | undefined>(undefined);
 const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined ? places[focusedPlaceIndex.value] : undefined);
-const userStore = useUserStore();
 
 const setFocusedPlaceIndex = (index: number | undefined) => focusedPlaceIndex.value = index;
-
-const testLogin = async () => {
-    const response = await axios.post<User>("http://" + location.hostname + ":3001/api/user/login", {
-        email: "foo@bar.com",
-        password: "test"
-    });
-    if (response.status === 200) {
-        userStore.changeUser(response.data);
-    } else {
-        userStore.changeUser(null);
-        console.error(response.statusText);
-    }
-}
-
-const testLogout = async () => {
-    const response = await axios.get("http://" + location.hostname + ":3001/api/user/logout");
-    userStore.changeUser(null);
-};
 </script>
 
 <style scoped>
 * {
     --show-place-info-duration: 150ms;
-    --header-height: 9rem;
 }
 
 main {
     display: grid;
+    height: 100%;
     grid-template-columns: 16rem 1fr;
-    height: calc(100svh - var(--header-height));
     transition: grid-template-columns var(--show-place-info-duration) var(--show-place-info-duration) ease-in-out;
 }
 
@@ -106,14 +76,14 @@ main.place-focused {
     grid-template-columns: 32rem 1fr;
 }
 
-.main-header {
-    height: var(--header-height);
-    padding: 2rem;
+section,
+.places-sidebar {
+    height: 100%;
 }
 
-.places-sidebar-section {
+.places-sidebar {
     padding: 1rem;
-    overflow-y: scroll;
+    overflow: auto;
 }
 
 .v-enter-active,
@@ -124,5 +94,15 @@ main.place-focused {
 .v-enter-from,
 .v-leave-to {
   translate: -100% 0 0;
+}
+
+@media screen and (width <= 1024px) {
+    main {
+        grid-template-columns: 0 1fr;
+    }
+
+    main.place-focused {
+        grid-template-columns: 1fr 0;
+    }
 }
 </style>
