@@ -8,11 +8,14 @@
                 <RouterLink to="/itineraries" class="nav-link">Itineraries</RouterLink>
             </li>
             <li>
+                <!--
                 <Button v-if="!!!authentication.userStore.userData" v-on:click="testLogin">Log in as Test</Button>
                 <div v-else>
                     <p>{{ authentication.userStore.userData.username }}</p>
                     <Button v-on:click="testLogout">Logout</Button>
                 </div>
+                -->
+                <RouterLink to="/login" class="nav-link">Log In</RouterLink>
             </li>
         </ul>
     </nav>
