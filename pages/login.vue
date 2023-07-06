@@ -1,31 +1,39 @@
 <template>
     <Panel class="loginPage">
         <div class="loginData">
-        <h3>Username:</h3>
-        <input placeholder="Username here">
-        <h3>Password:</h3>
-        <input type="password" placeholder="Password here">
+        <h3>Name:</h3>
+        <input placeholder="Insert your name here">
+        <h3>Email:</h3>
+        <input type="password" placeholder="Insert your mail here">
         </div>
-        <NuxtLink class="changePage" to="register">Are you not registered? Click here!</NuxtLink>
         <Button class="sendData">Log In</Button>
+        <NuxtLink class="changePage" to="register">Need to register? Click here!</NuxtLink>
     </Panel>  
 </template>
 
 <style scoped>
 
     .loginPage {
-        margin: 100px;
+        margin: 150px;
+        margin-left: 200px;
+        margin-right: 200px;
     }
     .loginData {
         margin: 20px;
     }
     .sendData {
         margin: auto;
-        margin-top: 10px;
+        margin-bottom: 10px;
     }
     input{
-        margin-left: 44%;
+        margin-left: 41%;
+        size: 30px;
         margin-bottom: 20px;
+        padding: 12px 20px;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
     }
     .changePage, h3 {
         text-align: center;
