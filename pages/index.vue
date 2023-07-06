@@ -1,7 +1,7 @@
 <template>
     <header class="main-header">
         <h1>Explorer</h1>
-        <Button v-if="!!!userStore.userData" v-on:click="testLogin">Log in as Test</Button>
+        <NuxtLink v-if="!!!userStore.userData" to="login">Log in</NuxtLink>
         <div v-else>
             <p>{{ userStore.userData.username }}</p>
             <Button v-on:click="testLogout" >Logout</Button>
