@@ -1,14 +1,9 @@
 <template>
-    <header class="main-header">
-        <h1>Explorer</h1>
-        <NuxtLink v-if="!!!userStore.userData" to="login">Log in</NuxtLink>
-        <div v-else>
-            <p>{{ userStore.userData.username }}</p>
-            <Button v-on:click="testLogout" >Logout</Button>
-        </div>
-    </header>
-    <main v-bind:class="!!focusedPlace ? 'place-focused' : ''">
-        <div class="places-sidebar-section">
+    <main 
+        v-if="!!places"
+        v-bind:class="{ 'place-focused': !!focusedPlace }"
+    >
+        <div class="places-sidebar">
             <Transition mode="out-in">
                 <UserPlacesSection
                     v-if="!!!focusedPlace"
