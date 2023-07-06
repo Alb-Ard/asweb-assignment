@@ -23,6 +23,7 @@ const RadarChart: ChartBaseData = ChartFactory.createChart("radar");
 <template>
   <Chart :data-values="data" :data-labels="dataLabels" :chart-data="DoughnutChart"></Chart>
   <Chart :data-values="data" :data-labels="dataLabels" :chart-data="RadarChart"></Chart>
+  <PlaceCard></PlaceCard>
 </template>
 
 <style scoped>
