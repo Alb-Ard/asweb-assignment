@@ -1,5 +1,8 @@
 <template>
-    <main v-bind:class="!!focusedPlace ? 'place-focused' : ''">
+    <main 
+        v-if="!!places"
+        v-bind:class="{ 'place-focused': !!focusedPlace }"
+    >
         <div class="places-sidebar">
             <Transition mode="out-in">
                 <UserPlacesSection
@@ -25,39 +28,14 @@
 </template>
 
 <script setup lang="ts">
-import Place from "~/lib/types/place";
-
-const places = [
-    {
-        id: "0",
-        name: "Place 0",
-        owner: { id: "0", name: "Dave" },
-        location: [47.41322, -1.219482] as [number, number],
-        photoSrcs: [],
-        reviews: [],
-    },
-    {
-        id: "1",
-        name: "Place 1",
-        owner: { id: "0", name: "Luis" },
-        location: [47.42022, -1.219482] as [number, number],
-        photoSrcs: [],
-        reviews: [],
-    },
-    {
-        id: "2",
-        name: "Place 2",
-        owner: { id: "0", name: "Rob" },
-        location: [47.41322, -1.210482] as [number, number],
-        photoSrcs: [],
-        reviews: [],
-    }
-] as Place[];
-
+const placesStore = usePlacesStore();
+const places = computed(() => placesStore.places);
 const focusedPlaceIndex = ref<number | undefined>(undefined);
-const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined ? places[focusedPlaceIndex.value] : undefined);
+const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined && !!places.value ? places.value[focusedPlaceIndex.value] : undefined);
 
 const setFocusedPlaceIndex = (index: number | undefined) => focusedPlaceIndex.value = index;
+
+onMounted(() => placesStore.fetchAsync(0));
 </script>
 
 <style scoped>

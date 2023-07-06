@@ -1,6 +1,7 @@
 <template>
     <main>
-        <template v-if="!!userStore.userData">
+        <p v-if="!!!itinerary">Loading...</p>
+        <template v-else-if="!!authentication.userStore.userData">
             <header>
                 <ButtonLink to="/itineraries">
                     <template v-slot:icon-left>
@@ -10,11 +11,13 @@
                 </ButtonLink>
                 <h2>{{ itinerary?.name }}</h2>
             </header>
-            <div v-bind:class="`itinerary-container ${listExpanded ? 'itinerary-list-visible' : 'itinerary-map-visible'}`">
+            <div 
+                v-bind:class="{ 'itinerary-container': true, 'itinerary-list-visible': listExpanded, 'itinerary-map-visible': !listExpanded }"
+            >
                 <section class="itinerary-list">
                     <ol>
                         <li
-                            v-for="place in itineraryPlaces"
+                            v-for="place in itinerary.places"
                             v-bind:draggable="true"
                             v-on:dragstart="e => dragDrop.onStartDragging(place, e)"
                             v-on:dragover="e => dragDrop.canDropOntoItem(e)"
@@ -37,7 +40,7 @@
                 </Button>
                 <section class="itinerary-map">
                     <UserPlacesMap 
-                        v-bind:places="itineraryPlaces" 
+                        v-bind:places="itinerary.places" 
                         v-bind:focusable-places="false"
                         v-bind:show-places-names="true"
                     />
@@ -53,61 +56,25 @@
 <script setup lang="ts">
 import { MapPlace } from 'components/UserPlacesMap.vue';
 
-const itineraries = [
-    {
-        id: "0",
-        name: "Trip 1"
-    },
-    {
-        id: "1",
-        name: "Trip 2"
-    },
-    {
-        id: "2",
-        name: "Trip 3"
-    }
-];
-
-const itineraryPlaces = ref<MapPlace[]>([
-    {
-        id: "0",
-        name: "Place 0",
-        location: [47.42022, -1.219482] as [number, number]
-    },
-    {
-        id: "1",
-        name: "Place 1",
-        location: [47.52022, -1.319482] as [number, number]
-    },
-    {
-        id: "2",
-        name: "Place 2",
-        location: [47.48022, -1.299482] as [number, number]
-    },
-    {
-        id: "3",
-        name: "Place 3",
-        location: [48.12022, -1.219482] as [number, number]
-    },
-    {
-        id: "4",
-        name: "Place 4",
-        location: [47.42922, -1.279482] as [number, number]
-    }
-]);
-
 const route = useRoute();
-const userStore = useUserStore();
+const authentication = useAuthentication();
+const itinerariesStore = useItinerariesStore();
+const itineraries = computed(() => itinerariesStore.itineraries);
 const itineraryId = ref(route.params.id as string);
-const itinerary = computed(() => itineraries.find(i => i.id === itineraryId.value));
+const itinerary = computed(() => itineraries.value?.find(i => i.id === itineraryId.value));
 const listExpanded = ref(false);
 
 const handlePlacesReordered = (draggedPlace: MapPlace, targetPlace: MapPlace) => {
-    itineraryPlaces.value = itineraryPlaces.value.filter(p => p.id !== draggedPlace.id);
-    itineraryPlaces.value.splice(itineraryPlaces.value.indexOf(targetPlace), 0, draggedPlace);
+    if (!!!itinerary.value?.places) {
+        return;
+    }
+    //itinerary.value.places = itinerary.value.places.filter(p => p.id !== draggedPlace.id);
+    //itinerary.value.places.splice(itinerary.value.places.indexOf(targetPlace), 0, draggedPlace);
 }
 
 const dragDrop = useDragDrop("itineraryPlace", handlePlacesReordered);
+
+onMounted(() => itinerariesStore.fetchAsync(0));
 </script>
 
 <style scoped>
@@ -152,15 +119,16 @@ li:where(:not(:last-child)) {
     }
 
     .itinerary-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: unset;
+        transition: grid-template-rows 150ms ease-in-out;
     }
 
     .itinerary-list-visible {
-        grid-auto-rows: 0 2rem 1fr;
+        grid-template-rows: 0 3rem 1fr;
     }
 
     .itinerary-map-visible {
-        grid-auto-rows: 1fr 2rem 0;
+        grid-template-rows: 1fr 3rem 0;
     }
 
     .itinerary-list {

@@ -1,7 +1,8 @@
 <template>
     <main>
         <h2>Your itineraries</h2>
-        <ol v-if="!!userStore.userData">
+        <p v-if="!!!itineraries">Loading...</p>
+        <ol v-else-if="!!authentication.userStore.userData">
             <li 
                 v-for="itinerary in itineraries"
                 v-bind:key="itinerary.id"
@@ -21,22 +22,10 @@
 </template>
 
 <script setup lang="ts">
-const itineraries = [
-    {
-        id: "0",
-        name: "Trip 1"
-    },
-    {
-        id: "1",
-        name: "Trip 2"
-    },
-    {
-        id: "2",
-        name: "Trip 3"
-    }
-];
-
-const userStore = useUserStore();
+const itinerariesStore = useItinerariesStore();
+const itineraries = computed(() => itinerariesStore.itineraries);
+const authentication = useAuthentication();
+onMounted(() => itinerariesStore.fetchAsync(0));
 </script>
 
 <style scoped>

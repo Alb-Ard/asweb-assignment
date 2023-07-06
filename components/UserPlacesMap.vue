@@ -28,8 +28,8 @@ import { TooltipOptions } from "leaflet";
 
 export interface MapPlace {
     readonly id: string,
-    readonly location: [number, number],
     readonly name?: string,
+    readonly location: [number, number],
 }
 
 const { places, focusablePlaces, showPlacesNames, focusedIndex } = defineProps<{
