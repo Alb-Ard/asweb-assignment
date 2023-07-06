@@ -8,14 +8,11 @@
                 <RouterLink to="/itineraries" class="nav-link">Itineraries</RouterLink>
             </li>
             <li>
-                <!--
-                <Button v-if="!!!authentication.userStore.userData" v-on:click="testLogin">Log in as Test</Button>
+                <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>
                 <div v-else>
                     <p>{{ authentication.userStore.userData.username }}</p>
-                    <Button v-on:click="testLogout">Logout</Button>
+                    <Button v-on:click="logout">Logout</Button>
                 </div>
-                -->
-                <RouterLink to="/login" class="nav-link">Log In</RouterLink>
             </li>
         </ul>
     </nav>
@@ -26,8 +23,9 @@ import useAuthentication from "~/composables/useAuthentication";
 
 const authentication = useAuthentication();
 
-const testLogin = async () => await authentication.login("foo@bar.com", "test");
-const testLogout = async () => await authentication.logout();
+//const showLogin = !location.pathname.includes("/login") && !location.pathname.includes("/register");
+
+const logout = async () => await authentication.logout();
 </script>
 
 <style scoped>
@@ -43,7 +41,7 @@ li {
     column-gap: 1rem;
 }
 
-li:last-child {
+li:nth-child(3) {
     margin-left: auto;
 }
 

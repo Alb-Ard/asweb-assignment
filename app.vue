@@ -5,13 +5,17 @@
             <UserNavbar />
         </header>
         <div class="page-container">
-            <NuxtPage />
+            <NuxtPage/>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import useAuthentication from "~/composables/useAuthentication";
+
+/*const pageRef = ref();
+
+pageRef.value*/
 
 const authentication = useAuthentication();
 

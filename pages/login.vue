@@ -1,15 +1,17 @@
 <template>
     <Panel class="loginPage">
+        <h2>Login</h2>
         <div class="loginData">
-        <h3>Name:</h3>
-        <input type="text" placeholder="Insert your name here">
-        <h3>Email:</h3>
-        <input type="text" placeholder="Insert your mail here">
+        <label for="mail">Email:</label>
+        <input type="email" id="mail" placeholder="Insert your mail here">
+        <label for="pWord">Password:</label>
+        <input type="password" id="pWord" placeholder="Insert your password here">
         </div>
         <Button class="sendData">Log In</Button>
         <ButtonLink class="changePage" to="/register">Need to register? Click here!</ButtonLink>
     </Panel>  
 </template>
+<!--Cambiamento da fare nella NavBar: nascondere con un v-if-->
 
 <style scoped>
 
@@ -24,6 +26,10 @@
         margin: auto;
         margin-bottom: 20px;
     }
+    label {
+        align-self: center;
+        display: block;
+    }
     input{
         margin-left: 41%;
         size: 30px;
@@ -34,7 +40,7 @@
         border-radius: 4px;
         box-sizing: border-box;
     }
-    .changePage, h3 {
+    .changePage, label,  h2 {
         text-align: center;
         text-shadow: 2cm;
         margin-bottom: 20px;
