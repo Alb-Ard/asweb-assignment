@@ -1,5 +1,5 @@
 <template>
-    <button v-bind="$attrs" v-bind:style="[...colors, borderRadius, width, ...instanceStyles]">
+    <RouterLink v-bind:to="to" v-bind="$attrs" v-bind:style="[...colors, borderRadius, ...instanceStyles]" class="link">
         <span class="icon-container">
             <slot name="icon-left"></slot>
         </span>
@@ -9,19 +9,20 @@
         <span class="icon-container">
             <slot name="icon-right"></slot>
         </span>
-    </button>
+    </RouterLink>
 </template>
 
 <script setup lang="ts">
+import { RouteLocationRaw } from ".nuxt/vue-router";
 import { Color, Radius } from "~/lib/types/commonComponentPropTypes";
 
-const props = defineProps<{
+const { to, ...props } = defineProps<{
+    to: RouteLocationRaw,
     tint?: "light" | "normal"
     color?: Color,
     flat?: boolean,
     radius?: Radius,
     style?: string | string[],
-    fullWidth?: boolean
 }>();
 
 const colorLevels = computed(() => (props.tint ?? "normal") === "light"
@@ -39,12 +40,12 @@ const colors = computed(() => props.flat ? [
     `--background-color-hover: var(--color-${props.color ?? "grey"}-${colorLevels.value[2]})`,
 ]);
 const borderRadius = computed(() => `--border-radius: ${Number.parseInt(props.radius ?? "1") / 2}rem`);
-const width = computed(() => `--width: ${props.fullWidth ? "100%" : "auto"}`);
 const instanceStyles = computed(() => props.style instanceof Array ? props.style : [props.style ?? ""]);
 </script>
 
 <style scoped>
-button {
+.link,
+.link:visited {
     --background-color-default: var(--color-grey-400);
     --background-color-disabled: var(--color-grey-400);
     --background-color-hover: var(--color-grey-400);
@@ -60,24 +61,25 @@ button {
     color: var(--color-default);
     fill: currentColor;
     border: 0;
+    text-decoration: none;
     border-radius: var(--border-radius);
-    transition: background-color 150ms, 
-                color 150ms, 
-                fill, 150ms, 
-                border-color 150ms;
+    transition: background-color 150ms,
+        color 150ms,
+        fill, 150ms,
+        border-color 150ms;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     width: var(--width);
 }
 
-button:disabled {
+.link:disabled {
     background-color: var(--background-color-disabled);
     color: var(--color-disabled);
 }
 
-button:hover,
-button:focus {
+.link:hover,
+.link:focus {
     cursor: pointer;
     background-color: var(--background-color-hover);
     color: var(--color-hover);
