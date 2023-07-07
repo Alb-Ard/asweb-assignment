@@ -11,7 +11,8 @@
         <ButtonLink class="changePage" to="/register">Need to register? Click here!</ButtonLink>
     </Panel>  
 </template>
-<!--Cambiamento da fare nella NavBar: nascondere con un v-if-->
+
+
 
 <style scoped>
 
