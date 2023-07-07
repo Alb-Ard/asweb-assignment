@@ -3,11 +3,19 @@
         <header>
             <h2>Places</h2>
         </header>
+        <input type="text" id="searchPlaceName" placeholder="Search..." v-on:input="handleInputModified" />
         <ol>
-            <li v-for="(place, placeIndex) in places" v-bind:key="place.id">
-                <Button v-bind:full-width="true" v-on:click="handlePlaceClicked(placeIndex)">
+            <li 
+                v-for="(place, placeIndex) in filteredPlaces"
+                v-bind:key="place.id"
+                v-intersection-observer="handleObservedPlacesChanged"
+            >
+                <Button 
+                    v-bind:full-width="true" 
+                    v-on:click="handlePlaceClicked(place.id)"
+                    >
                     {{ place.name }}
-                    <img v-bind:src="`https://picsum.photos/id/${placeIndex + 100}/200`" />
+                    <img v-if="place.photoSrcs.length > 0" v-bind:src="place.photoSrcs.at(0)" />
                 </Button>
             </li>
         </ol>
@@ -16,16 +24,42 @@
 
 <script setup lang="ts">
 import Place from "~/lib/types/place";
+import { vIntersectionObserver } from "@vueuse/components";
 
-const { places } = defineProps<{
+const props = defineProps<{
     places: Place[],
 }>();
 
+const searchTimeout = ref();
+const nameFilter = ref<string>("");
+const filteredPlaces = computed(() => props.places?.filter(p => p.name.includes(nameFilter.value)));
+const intersectedPlacesCount = ref(0);
+
 const emit = defineEmits<{
-    (event: "placeFocused", placeIndex: number): void
+    (event: "requestPlaces"): void
+    (event: "placeFocused", placeId: string): void
 }>();
 
-const handlePlaceClicked = (placeIndex: number) => emit("placeFocused", placeIndex);
+const searchPlaces = (searchString: string) => nameFilter.value = searchString;
+
+const handlePlaceClicked = (placeId: string) => emit("placeFocused", placeId);
+const handleInputModified = (e: Event) => {
+    if (!!searchTimeout.value) {
+        clearTimeout(searchTimeout.value);
+    }
+    searchTimeout.value = setTimeout(searchPlaces, 50, (e.target as HTMLInputElement).value);
+}
+const handleObservedPlacesChanged = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            observer.unobserve(entry.target);
+            intersectedPlacesCount.value++;
+        }
+        if (intersectedPlacesCount.value >= filteredPlaces.value.length) {
+            emit("requestPlaces");
+        }
+    });
+};
 </script>
 
 <style scoped>

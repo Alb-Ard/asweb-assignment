@@ -1,12 +1,12 @@
 import axios from "axios";
+import { getApiUrl } from "~/lib/api";
 import User from "~/lib/types/user";
 
 const useAuthentication = () => {
-    const getApiUrl = () => "http://" + location.hostname + ":3001/api/user";
     const userStore = useUserStore();
 
     const loginAsync = async (email: string, password: string) => {
-        const response = await axios.post<User>(getApiUrl() + "/login", {
+        const response = await axios.post<User>(getApiUrl("user") + "/login", {
             email: email,
             password: password
         }, {
@@ -21,12 +21,12 @@ const useAuthentication = () => {
     }
 
     const logoutAsync = async () => {
-        await axios.get(getApiUrl() + "/logout");
+        await axios.post(getApiUrl("user") + "/logout");
         userStore.changeUser(null);
     };
 
     const renewAsync = async () => {
-        const response = await axios.get<User>(getApiUrl() + "/renew", {
+        const response = await axios.post<User>(getApiUrl("user") + "/renew", {}, {
             withCredentials: true
         });
         if (response.status === 200) {

@@ -2,12 +2,12 @@
     <nav>
         <ul>
             <li>
-                <RouterLink to="/" class="nav-link">Explore</RouterLink>
+                <NuxtLink to="/" class="nav-link" v-bind:class="{ current: isPage('') }">Explore</NuxtLink>
             </li>
             <li>
-                <RouterLink to="/itineraries" class="nav-link">Itineraries</RouterLink>
+                <NuxtLink to="/itineraries" class="nav-link" v-bind:class="{ current: isPage('itineraries') }">Itineraries</NuxtLink>
             </li>
-            <li>
+            <li v-if="showLogin">
                 <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>
                 <div v-else>
                     <p>{{ authentication.userStore.userData.username }}</p>
@@ -19,9 +19,11 @@
 </template>
 
 <script setup lang="ts">
-import useAuthentication from "~/composables/useAuthentication";
-
 const authentication = useAuthentication();
+const route = useRoute();
+const showLogin = computed(() => !isPage("login") && !isPage("register"));
+
+const isPage = (pageName: string) => route.path === "/" + pageName;
 
 //const showLogin = !location.pathname.includes("/login") && !location.pathname.includes("/register");
 
@@ -70,7 +72,8 @@ li:nth-child(3) {
     transition: width 100ms ease-in-out;
 }
 
-.nav-link:hover::before {
+.nav-link:hover::before,
+.nav-link.current::before {
     width: 100%;
 }
 </style>

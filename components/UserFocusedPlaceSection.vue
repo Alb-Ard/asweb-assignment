@@ -13,16 +13,16 @@
             <header>
                 <h3>Details</h3>
             </header>
-            <p>Owner: {{ place.owner.name }}</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem nemo, amet recusandae similique labore quasi error harum, repellendus nesciunt ab maxime asperiores corrupti sed sint iusto, maiores molestias culpa blanditiis.</p>
+            <p>Owner: {{ place.owner.username }}</p>
+            <p>{{ place.description }}</p>
         </section>
         <section>
             <header>
                 <h3>Photos</h3>
             </header>
             <ul class="place-images-list">
-                <li v-for="i in [1000, 100, 900]">
-                    <img v-bind:src="`https://picsum.photos/id/${i}/200`" />
+                <li v-for="src in place.photoSrcs">
+                    <img v-bind:src="src" />
                 </li>
             </ul>
         </section>
@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import Place from "~/lib/types/place";
 
-const { place } = defineProps<{
+defineProps<{
     place: Place,
 }>();
 

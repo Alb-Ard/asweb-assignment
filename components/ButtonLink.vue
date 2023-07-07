@@ -1,5 +1,5 @@
 <template>
-    <RouterLink v-bind:to="to" v-bind="$attrs" v-bind:style="[...colors, borderRadius, ...instanceStyles]" class="link">
+    <NuxtLink v-bind:to="to" v-bind="$attrs" v-bind:style="[...colors, borderRadius, ...instanceStyles]" class="link">
         <span class="icon-container">
             <slot name="icon-left"></slot>
         </span>
@@ -9,7 +9,7 @@
         <span class="icon-container">
             <slot name="icon-right"></slot>
         </span>
-    </RouterLink>
+    </NuxtLink>
 </template>
 
 <script setup lang="ts">

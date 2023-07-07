@@ -1,59 +1,162 @@
+import axios from "axios";
+import { getApiUrl } from "~/lib/api";
 import { defineStore } from "pinia";
 import Itinerary from "~/lib/types/itinerary";
+import { areFetchedPagesComplete } from "~/lib/dataStore";
 
 export const useItinerariesStore = defineStore("itineraries", () => { 
     const itineraries = ref<Itinerary[] | undefined>(undefined);
+    const page = ref(0);
     const authentication = useAuthentication();
 
-    const fetchAsync = async (page: number) => {
+    const fetchNextAsync = async () => {
         if (!!!authentication.userStore.userData) {
             return;
         }
-        const itineraryPlaces = [
-            {
-                id: "0",
-                name: "Place 0",
-                location: [47.42022, -1.219482] as [number, number]
-            },
-            {
-                id: "1",
-                name: "Place 1",
-                location: [47.52022, -1.319482] as [number, number]
-            },
-            {
-                id: "2",
-                name: "Place 2",
-                location: [47.48022, -1.299482] as [number, number]
-            },
-            {
-                id: "3",
-                name: "Place 3",
-                location: [47.62022, -1.219482] as [number, number]
-            },
-            {
-                id: "4",
-                name: "Place 4",
-                location: [47.42922, -1.279482] as [number, number]
-            }
-        ];
 
-        itineraries.value = [
-            {
-                id: "0",
-                name: "Trip 1",
-                places: [...itineraryPlaces],
-            },
-            {
-                id: "1",
-                name: "Trip 2",
-                places: [...itineraryPlaces],
-            },
-            {
-                id: "2",
-                name: "Trip 3",
-                places: [...itineraryPlaces],
-            }
-        ];
+        const response = await axios.get<Itinerary[]>(getApiUrl("itinerary") + "?page=" + page.value, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return;
+        }
+        if (areFetchedPagesComplete(response.data)) {
+            page.value++;
+        }
+        if (!!!itineraries.value) {
+            itineraries.value = [...response.data];
+        } else {
+            response.data.forEach(addItinerary);
+        }
+    }
+
+    const fetchOneAsync = async (id: string) => {
+        if (!!!authentication.userStore.userData) {
+            return;
+        }
+
+        const response = await axios.get<Itinerary>(getApiUrl("itinerary") + "/" + id, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return;
+        }
+        if (!!!itineraries.value) {
+            itineraries.value = [response.data];
+        } else {
+            addItinerary(response.data);
+        }
+    }
+
+    const createAsync = async (name: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.post<string>(getApiUrl("itinerary"), { name: name, owner: authentication.userStore.userData.id }, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        }
+        await fetchOneAsync(response.data);
+        return true;
+    }
+
+    const updateAsync = async (itinerary: Partial<Itinerary> & { id: string }) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const { id: itineraryId, ...itineraryData } = itinerary;
+        const response = await axios.patch(getApiUrl("itinerary") + "/" + itineraryId, itineraryData, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+            await fetchOneAsync(itineraryId);
+        }
+        return true;
+    }
+
+    const deleteAsync = async (id: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.delete(getApiUrl("itinerary") + "/" + id, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        }
+        itineraries.value = itineraries.value?.filter(i => i.id !== id);
+        return true;
+    }
+
+    const addPlaceAsync = async (itineraryId: string, placeId: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.post(getApiUrl("itinerary") + "/" + itineraryId + "/places", {
+            id: placeId
+        }, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+            await fetchOneAsync(itineraryId);
+        }
+        return true;
+    }
+
+    const swapPlacesAsync = async (itineraryId: string, firstId: string, secondId: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.patch(getApiUrl("itinerary") + "/" + itineraryId + "/places", {
+            swapPlaces: [firstId, secondId]
+        }, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+            await fetchOneAsync(itineraryId);
+        }
+        return true;
+    }
+
+    const removePlaceAsync = async (itineraryId: string, placeId: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.delete(getApiUrl("itinerary") + "/" + itineraryId + "/places/" + placeId, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+            await fetchOneAsync(itineraryId);
+        }
+        return true;
+    }
+
+    const addItinerary = (newItinerary: Itinerary) => {
+        if (!!!itineraries.value) {
+            itineraries.value = [];
+        }
+        const existingItinerary = itineraries.value.find(i => i.id === newItinerary.id);
+        if (!!existingItinerary) {
+            Object.assign(existingItinerary, newItinerary);
+        } else {
+            itineraries.value.push(newItinerary);
+        }
     }
 
     watchEffect(() => {
@@ -64,6 +167,13 @@ export const useItinerariesStore = defineStore("itineraries", () => {
 
     return {
         itineraries: computed(() => itineraries.value),
-        fetchAsync
+        fetchNextAsync,
+        fetchOneAsync,
+        createAsync,
+        updateAsync,
+        deleteAsync,
+        addPlaceAsync,
+        swapPlacesAsync,
+        removePlaceAsync,
     };
 });

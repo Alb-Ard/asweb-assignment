@@ -1,6 +1,9 @@
+import Owner from "./owner";
+
 interface Itinerary {
     readonly id: string,
     readonly name: string,
+    readonly owner: Owner
     readonly places: ItineraryPlace[],
 }
 

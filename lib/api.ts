@@ -1,0 +1,1 @@
+export const getApiUrl = (subApi: string) => "http://" + location.hostname + ":3001/api/" + subApi;

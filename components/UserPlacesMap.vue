@@ -10,9 +10,9 @@
             v-bind:key="place.id"
             v-bind:lat-lng="place.location" 
             v-bind:draggable="false"
-            v-bind:visible="focusedIndex === undefined || focusedIndex === placeIndex"
+            v-bind:visible="focusedId === undefined || focusedId === place.id"
             v-bind:interactive="focusablePlaces"
-            v-on:click="handlePlaceClicked(placeIndex)"
+            v-on:click="handlePlaceClicked(place.id)"
         >
             <LTooltip v-bind:options="tooltipOptions">
                 {{ place.name }}
@@ -32,24 +32,24 @@ export interface MapPlace {
     readonly location: [number, number],
 }
 
-const { places, focusablePlaces, showPlacesNames, focusedIndex } = defineProps<{
+const props = defineProps<{
     places: MapPlace[],
     focusablePlaces?: boolean,
     showPlacesNames?: boolean,
-    focusedIndex?: number,
+    focusedId?: string,
 }>();
 
 const tooltipOptions: TooltipOptions = {
-    permanent: showPlacesNames,
+    permanent: props.showPlacesNames,
     direction: "right"
 };
 
-const focusedPlace = computed(() => !!focusedIndex ? places[focusedIndex] : null);
+const focusedPlace = computed(() => !!props.focusedId ? props.places.find(p => p.id === props.focusedId) : null);
 
 const emit = defineEmits<{
-    (event: "placeFocused", placeIndex: number): void
+    (event: "placeFocused", placeId: string): void
 }>();
 
-const handlePlaceClicked = (placeIndex: number) => (focusablePlaces ?? true) && emit("placeFocused", placeIndex);
+const handlePlaceClicked = (placeId: string) => (props.focusablePlaces ?? true) && emit("placeFocused", placeId);
 
 </script>
