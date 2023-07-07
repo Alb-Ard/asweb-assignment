@@ -1,18 +1,36 @@
 <template>
     <Panel class="loginPage">
         <h2>Login</h2>
+        <p v-if="!!login">Incorrect data input! Try again!</p>
         <div class="loginData">
         <label for="mail">Email:</label>
-        <input type="email" id="mail" placeholder="Insert your mail here">
+        <input type="email" id="mail" v-model="insertMail" placeholder="Insert your mail here">
         <label for="pWord">Password:</label>
-        <input type="password" id="pWord" placeholder="Insert your password here">
+        <input type="password" id="pWord" v-model="insertPassword" placeholder="Insert your password here">
         </div>
-        <Button class="sendData">Log In</Button>
+        <Button class="sendData" @click="login">Log In</Button>
         <ButtonLink class="changePage" to="/register">Need to register? Click here!</ButtonLink>
     </Panel>  
 </template>
 
+<script setup lang="ts">
+import useAuthentication from "~/composables/useAuthentication";
 
+const authentication = useAuthentication();
+
+const insertMail = ref("");
+const insertPassword = ref("");
+
+const login = async () => {
+
+    await authentication.login(insertMail.value, insertPassword.value);
+
+    if(authentication.userStore.userData !== null || authentication.userStore.userData !== undefined) {
+        navigateTo("/");
+    } 
+}
+
+</script>
 
 <style scoped>
 
@@ -41,7 +59,7 @@
         border-radius: 4px;
         box-sizing: border-box;
     }
-    .changePage, label,  h2 {
+    .changePage, label,  h2, p {
         text-align: center;
         text-shadow: 2cm;
         margin-bottom: 20px;
@@ -52,4 +70,7 @@
         margin-left:30%;
         margin-right: 30%;
     }
+    p {
+        background-color: red;
+    } 
 </style>
