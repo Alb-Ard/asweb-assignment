@@ -1,8 +1,14 @@
 <script setup lang="ts">
   const starRating = ref(3.5);
 
+  const image = ref("https://www.corriereromagna.it/wp-content/uploads/2021/06/cesena-turismo.jpg");
+
   function renderStarRating(fullStar: number, halfStar: number): string {
     return (starRating.value >= fullStar) ? 'fa fa-star' : ((starRating.value >= halfStar) ? 'fa fa-star-half-full' : 'fa fa-star-o')
+  }
+
+  function replaceIfMissing(event: Event) {
+    (event.target as HTMLImageElement).src = "https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg";
   }
 
 
@@ -10,7 +16,7 @@
 
 <template>
   <div class="card">
-    <img alt="" src="https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg">
+    <img alt="" :src="image" @error = "replaceIfMissing">
     <div class="review">
         <span :class="renderStarRating(1, 0.5)"></span>
         <span :class="renderStarRating(2, 1.5)"></span>
