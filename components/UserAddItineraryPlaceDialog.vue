@@ -14,7 +14,7 @@
                 v-bind:places="placesStore.places"
                 v-on:place-focused="handlePlaceSelected"
             />
-            <section>
+            <section class="places-map">
                 <UserPlacesMap 
                     v-bind:places="placesStore.places" 
                     v-bind:focusable-places="true" 
@@ -85,5 +85,15 @@ dialog::backdrop {
 dialog > div > *:first-child {
     padding: 1rem;
     overflow: auto;
+}
+
+@media screen and (width <= 1024px) {
+    dialog > div {
+        grid-template-columns: 1fr;
+    }
+
+    .places-map {
+        display: none;
+    }
 }
 </style>

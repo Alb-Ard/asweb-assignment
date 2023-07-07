@@ -48,6 +48,53 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         }
     }
 
+    const createAsync = async (name: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.post<string>(getApiUrl("itinerary"), { name: name, owner: authentication.userStore.userData.id }, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        }
+        await fetchOneAsync(response.data);
+        return true;
+    }
+
+    const updateAsync = async (itinerary: Partial<Itinerary> & { id: string }) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const { id: itineraryId, ...itineraryData } = itinerary;
+        const response = await axios.patch(getApiUrl("itinerary") + "/" + itineraryId, itineraryData, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+            await fetchOneAsync(itineraryId);
+        }
+        return true;
+    }
+
+    const deleteAsync = async (id: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.delete(getApiUrl("itinerary") + "/" + id, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        }
+        itineraries.value = itineraries.value?.filter(i => i.id !== id);
+        return true;
+    }
+
     const addPlaceAsync = async (itineraryId: string, placeId: string) => {
         if (!!!authentication.userStore.userData) {
             return false;
@@ -122,6 +169,9 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         itineraries: computed(() => itineraries.value),
         fetchNextAsync,
         fetchOneAsync,
+        createAsync,
+        updateAsync,
+        deleteAsync,
         addPlaceAsync,
         swapPlacesAsync,
         removePlaceAsync,

@@ -28,21 +28,25 @@ export const usePlacesStore = defineStore("places", () => {
         addPlace(response.data);
     };
 
-    const createPlaceAsync = async (name: string, location: [number, number]) => {
+    const createAsync = async (name: string, location: [number, number]) => {
         if (!!!authentication.userStore.userData) {
             return false;
         }
-        const response = await axios.post(getApiUrl("place"), {
+        const response = await axios.post<string>(getApiUrl("place"), {
             name: name,
             owner: authentication.userStore.userData.id,
             location: location,
         }, {
             withCredentials: true
         });
-        return response.status === 200;
+        if (response.status !== 200) {
+            return false;
+        }
+        await fetchOneAsync(response.data);
+        return true;
     }
 
-    const updatePlaceAsync = async (place: Partial<Place> & { id: string }) => {
+    const updateAsync = async (place: Partial<Place> & { id: string }) => {
         const { id: placeId, ...placeData } = place;
         const response = await axios.patch(getApiUrl("place") + "/" + placeId, placeData, {
             withCredentials: true
@@ -55,7 +59,7 @@ export const usePlacesStore = defineStore("places", () => {
         return true;
     }
 
-    const deletePlaceAsync = async (id: string) => {
+    const deleteAsync = async (id: string) => {
         const response = await axios.delete(getApiUrl("place") + "/" + id, {
             withCredentials: true
         });
@@ -83,8 +87,8 @@ export const usePlacesStore = defineStore("places", () => {
         places: computed(() => places.value),
         fetchNextAsync,
         fetchOneAsync,
-        createPlaceAsync,
-        updatePlaceAsync,
-        deletePlaceAsync,
+        createAsync,
+        updateAsync,
+        deleteAsync,
     };
 });

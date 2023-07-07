@@ -1,7 +1,10 @@
 <template>
     <main>
-        <p v-if="!!!itinerary">Loading...</p>
-        <template v-else-if="!!authentication.userStore.userData">
+        <p v-if="!!!authentication.userStore.userData">
+            <RouterLink to="/login">Log in</RouterLink> or <RouterLink to="/register">Sign up</RouterLink> to create itineraries!
+        </p>
+        <p v-else-if="!!!itinerary">Loading...</p>
+        <template v-else>
             <header>
                 <ButtonLink to="/itineraries">
                     <template v-slot:icon-left>
@@ -9,10 +12,24 @@
                     </template>
                     Back
                 </ButtonLink>
-                <h2>{{ itinerary?.name }}</h2>
+                <h2 v-if="!isRenaming">{{ itinerary?.name }}</h2>
+                <input v-else type="text" v-model="newName" placeholder="Input a name..." />
+                <Button 
+                    v-bind:disabled="isLoading"
+                    v-on:click="isRenaming = !isRenaming"
+                >
+                    {{ isRenaming ? "Confirm" : "Rename" }}
+                </Button>
+                <Button 
+                    v-bind:disabled="isLoading"
+                    color="danger"
+                    v-on:click="handleDelete"
+                >
+                    Delete
+                </Button>
             </header>
             <div 
-                v-bind:class="{ 'itinerary-container': true, 'itinerary-list-visible': listExpanded, 'itinerary-map-visible': !listExpanded }"
+                v-bind:class="{ 'itinerary-container': true, 'itinerary-list-visible': isListExpanded, 'itinerary-map-visible': !isListExpanded }"
             >
                 <section class="itinerary-list">
                     <ol>
@@ -28,16 +45,23 @@
                             </Panel>
                         </li>
                     </ol>
-                    <Button v-bind:full-width="true" color="primary" v-on:click="placePickerVisible = true">+</Button>
+                    <Button 
+                        v-bind:full-width="true" 
+                        v-bind:disabled="isLoading"
+                        color="primary"
+                        v-on:click="isPlacePickerVisible = true"
+                    >
+                        +
+                    </Button>
                 </section>
                 <Button 
                     v-bind:full-width="true"
-                    v-bind:color="listExpanded ? 'grey' : 'primary'"
+                    v-bind:color="isListExpanded ? 'grey' : 'primary'"
                     radius="0"
                     class="toggle-list-button"
-                    v-on:click="listExpanded = !listExpanded"
+                    v-on:click="isListExpanded = !isListExpanded"
                 >
-                    {{ listExpanded ? "\\/" : "/\\" }}
+                    {{ isListExpanded ? "\\/" : "/\\" }}
                 </Button>
                 <section class="itinerary-map">
                     <UserPlacesMap 
@@ -48,41 +72,51 @@
                 </section>
             </div>
         </template>
-        <p v-else>
-            <RouterLink to="/login">Log in</RouterLink> or <RouterLink to="/register">Sign up</RouterLink> to create itineraries!
-        </p>
     </main>
     <UserAddItineraryPlaceDialog 
-        v-bind:open="placePickerVisible"
-        v-on:closed="placePickerVisible = false"
-        v-on:place-selected="addPlaceAsync"
+        v-bind:open="isPlacePickerVisible"
+        v-on:closed="isPlacePickerVisible = false"
+        v-on:place-selected="handleAddPlace"
     />
 </template>
 
 <script setup lang="ts">
 import { MapPlace } from "components/UserPlacesMap.vue";
-import { initializeIfEmpty } from "~/lib/dataStore";
 
 const route = useRoute();
 const authentication = useAuthentication();
 const itinerariesStore = useItinerariesStore();
 const itineraryId = ref(route.params.id as string);
 const itinerary = computed(() => itinerariesStore.itineraries?.find(i => i.id === itineraryId.value));
-const listExpanded = ref(false);
-const placePickerVisible = ref(false);
+const isListExpanded = ref(false);
+const isPlacePickerVisible = ref(false);
+const isRenaming = ref(false);
+const isLoading = ref(false);
+const newName = ref("");
 
-const addPlaceAsync = async (placeId: string) => itinerariesStore.addPlaceAsync(itineraryId.value, placeId);
+const awaitWhileLoading = <T>(promise: Promise<T>) => {
+    isLoading.value = true;
+    return promise.then(() => isLoading.value = false);
+}
 
+const handleAddPlace = (placeId: string) => awaitWhileLoading(itinerariesStore.addPlaceAsync(itineraryId.value, placeId));
+const handleDelete = () => awaitWhileLoading(itinerariesStore.deleteAsync(itineraryId.value).then(() => { navigateTo("/itineraries"); }));
 const handlePlacesReorderedAsync = async (draggedPlace: MapPlace, targetPlace: MapPlace) => {
     if (!!!itinerary.value?.places) {
         return;
     }
-    await itinerariesStore.swapPlacesAsync(itineraryId.value, draggedPlace.id, targetPlace.id);
+    await awaitWhileLoading(itinerariesStore.swapPlacesAsync(itineraryId.value, draggedPlace.id, targetPlace.id));
 }
 
 const dragDrop = useDragDrop("itineraryPlace", handlePlacesReorderedAsync);
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && initializeIfEmpty(() => itinerariesStore.itineraries, itinerariesStore); }, { immediate: true });
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && itinerariesStore.fetchOneAsync(itineraryId.value); }, { immediate: true });
+watchEffect(() => newName.value = itinerary.value?.name ?? "");
+watch(isRenaming, (isNowRenaming, wasRenaming) => {
+    if (wasRenaming && !isNowRenaming) {
+        awaitWhileLoading(itinerariesStore.updateAsync({ id: itineraryId.value, name: newName.value }));
+    }
+});
 </script>
 
 <style scoped>
@@ -96,7 +130,8 @@ main {
 
 main > header {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto auto;
+    column-gap: 1rem;
     padding: 1rem;
     text-align: center;
 }

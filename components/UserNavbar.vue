@@ -2,10 +2,10 @@
     <nav>
         <ul>
             <li>
-                <NuxtLink to="/" class="nav-link">Explore</NuxtLink>
+                <NuxtLink to="/" class="nav-link" v-bind:class="{ current: isPage('') }">Explore</NuxtLink>
             </li>
             <li>
-                <NuxtLink to="/itineraries" class="nav-link">Itineraries</NuxtLink>
+                <NuxtLink to="/itineraries" class="nav-link" v-bind:class="{ current: isPage('itineraries') }">Itineraries</NuxtLink>
             </li>
             <li v-if="showLogin">
                 <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>
@@ -21,7 +21,9 @@
 <script setup lang="ts">
 const authentication = useAuthentication();
 const route = useRoute();
-const showLogin = computed(() => !route.path.includes("/login") && !route.path.includes("/register"));
+const showLogin = computed(() => !isPage("login") && !isPage("register"));
+
+const isPage = (pageName: string) => route.path === "/" + pageName;
 
 const logout = async () => await authentication.logout();
 </script>
@@ -68,7 +70,8 @@ li:nth-child(3) {
     transition: width 100ms ease-in-out;
 }
 
-.nav-link:hover::before {
+.nav-link:hover::before,
+.nav-link.current::before {
     width: 100%;
 }
 </style>
