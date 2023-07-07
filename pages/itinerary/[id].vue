@@ -60,7 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { MapPlace } from 'components/UserPlacesMap.vue';
+import { MapPlace } from "components/UserPlacesMap.vue";
+import { initializeIfEmpty } from "~/lib/dataStore";
 
 const route = useRoute();
 const authentication = useAuthentication();
@@ -81,14 +82,16 @@ const handlePlacesReorderedAsync = async (draggedPlace: MapPlace, targetPlace: M
 
 const dragDrop = useDragDrop("itineraryPlace", handlePlacesReorderedAsync);
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && itinerariesStore.fetchOneAsync(itineraryId.value); }, { immediate: true });
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && initializeIfEmpty(() => itinerariesStore.itineraries, itinerariesStore); }, { immediate: true });
 </script>
 
 <style scoped>
 main {
+    --header-height: 4rem;
+
     height: 100%;
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: var(--header-height) calc(100% - var(--header-height));
 }
 
 main > header {
@@ -105,6 +108,7 @@ section:first-child {
 
 ol {
     margin-bottom: 1rem;
+    overflow: auto;
 }
 
 li {

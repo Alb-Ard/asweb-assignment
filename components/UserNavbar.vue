@@ -2,10 +2,10 @@
     <nav>
         <ul>
             <li>
-                <RouterLink to="/" class="nav-link">Explore</RouterLink>
+                <NuxtLink to="/" class="nav-link">Explore</NuxtLink>
             </li>
             <li>
-                <RouterLink to="/itineraries" class="nav-link">Itineraries</RouterLink>
+                <NuxtLink to="/itineraries" class="nav-link">Itineraries</NuxtLink>
             </li>
             <li v-if="showLogin">
                 <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>

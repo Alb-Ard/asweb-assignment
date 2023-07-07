@@ -21,12 +21,12 @@ const useAuthentication = () => {
     }
 
     const logoutAsync = async () => {
-        await axios.get(getApiUrl("user") + "/logout");
+        await axios.post(getApiUrl("user") + "/logout");
         userStore.changeUser(null);
     };
 
     const renewAsync = async () => {
-        const response = await axios.get<User>(getApiUrl("user") + "/renew", {
+        const response = await axios.post<User>(getApiUrl("user") + "/renew", {}, {
             withCredentials: true
         });
         if (response.status === 200) {

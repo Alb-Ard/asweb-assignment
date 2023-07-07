@@ -7,35 +7,44 @@
             <Transition mode="out-in">
                 <UserPlacesSection
                     v-if="!!!focusedPlace"
-                    v-bind:places="places" 
-                    v-on:place-focused="setFocusedPlaceIndex" 
+                    v-bind:places="places"
+                    v-on:request-places="handleRequestPlaces" 
+                    v-on:place-focused="handlePlaceFocused" 
+                    v-on:test-remove="removeTestPlace"
                 />
                 <UserFocusedPlaceSection
                     v-else
                     v-bind:place="focusedPlace"
-                    v-on:back-pressed="setFocusedPlaceIndex(undefined)"
+                    v-on:back-pressed="handlePlaceFocused(undefined)"
                 />
             </Transition>
         </div>
         <section>
+            <Button v-on:click="addTestPlace">Add Test Place</Button>
             <UserPlacesMap 
                 v-bind:places="places" 
-                v-bind:focused-index="focusedPlaceIndex"
-                v-on:place-focused="setFocusedPlaceIndex"
+                v-bind:focused-index="focusedPlaceId"
+                v-on:place-focused="handlePlaceFocused"
             />
         </section>
     </main>
 </template>
 
 <script setup lang="ts">
+import { initializeIfEmpty } from "~/lib/dataStore";
+
 const placesStore = usePlacesStore();
 const places = computed(() => placesStore.places);
-const focusedPlaceIndex = ref<number | undefined>(undefined);
-const focusedPlace = computed(() => focusedPlaceIndex.value !== undefined && !!places.value ? places.value[focusedPlaceIndex.value] : undefined);
+const focusedPlaceId = ref<string>();
+const focusedPlace = computed(() => focusedPlaceId.value !== undefined && !!places.value ? places.value.find(p => p.id === focusedPlaceId.value) : undefined);
 
-const setFocusedPlaceIndex = (index: number | undefined) => focusedPlaceIndex.value = index;
+const handleRequestPlaces = () => placesStore.fetchNextAsync();
+const handlePlaceFocused = (id: string | undefined) => focusedPlaceId.value = id;
 
-onMounted(() => placesStore.fetchAsync(0));
+const addTestPlace = () => placesStore.createPlaceAsync("Test", [47.41322, -1.219482]);
+const removeTestPlace = (id: string) => placesStore.deletePlaceAsync(id);
+
+onMounted(() => initializeIfEmpty(() => placesStore.places, placesStore));
 </script>
 
 <style scoped>

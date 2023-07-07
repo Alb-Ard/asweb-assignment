@@ -1,5 +1,6 @@
 <template>
     <dialog 
+        v-if="open"
         v-bind:ref="e => dialogRef = (e as HTMLDialogElement)"
         v-on:close="emit('closed')"
     >
@@ -26,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+import { initializeIfEmpty } from "~/lib/dataStore";
+
 const placesStore = usePlacesStore();
 
 const props = defineProps<{
@@ -39,7 +42,7 @@ const emit = defineEmits<{
     (event: "closed"): void
 }>();
 
-const handlePlaceSelected = (placeIndex: number) => emit("placeSelected", placesStore.places!.at(placeIndex)!.id);
+const handlePlaceSelected = (placeId: string) => emit("placeSelected", placeId);
 
 watchEffect(() => {
     if (props.open) {
@@ -49,16 +52,18 @@ watchEffect(() => {
     }
 });
 
-onMounted(() => placesStore.fetchAsync(0));
+onMounted(() => initializeIfEmpty(() => placesStore.places, placesStore));
 </script>
 
 <style scoped>
 dialog {
+    --header-height: 3rem;
+
     margin: auto;
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: var(--header-height) calc(90dvh - var(--header-height));
     width: 90vw;
-    aspect-ratio: 1 / 1;
+    height: 90dvh;
     border: 0;
 }
 
@@ -79,5 +84,6 @@ dialog::backdrop {
 
 dialog > div > *:first-child {
     padding: 1rem;
+    overflow: auto;
 }
 </style>

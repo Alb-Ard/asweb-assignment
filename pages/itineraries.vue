@@ -6,6 +6,7 @@
             <li 
                 v-for="itinerary in itineraries"
                 v-bind:key="itinerary.id"
+                v-intersection-observer="handleItineraryIntersectionChanged"
             >
                 <ButtonLink v-bind:to="`/itinerary/${itinerary.id}`">
                     {{ itinerary.name }}
@@ -22,11 +23,30 @@
 </template>
 
 <script setup lang="ts">
+import { initializeIfEmpty } from "~/lib/dataStore";
+import { vIntersectionObserver } from "@vueuse/components";
+
 const itinerariesStore = useItinerariesStore();
 const itineraries = computed(() => itinerariesStore.itineraries);
 const authentication = useAuthentication();
+const intersectedItinerariesCount = ref(0);
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && itinerariesStore.fetchAsync(0); }, { immediate: true });
+const handleItineraryIntersectionChanged = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+    entries.forEach(entry => {
+        if (!!!itineraries.value) {
+            return;
+        }
+        if (entry.isIntersecting) {
+            observer.unobserve(entry.target);
+            intersectedItinerariesCount.value++;
+        }
+        if (intersectedItinerariesCount.value >= itineraries.value.length) {
+            itinerariesStore.fetchNextAsync();
+        }
+    });
+};
+
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && initializeIfEmpty(() => itinerariesStore.itineraries, itinerariesStore); }, { immediate: true });
 </script>
 
 <style scoped>
@@ -39,6 +59,10 @@ main {
 h2 {
     margin-left: 1rem;
     margin-bottom: 2rem;
+}
+
+ol {
+    overflow: auto;
 }
 
 li {
