@@ -7,6 +7,7 @@ import Chart from "~/components/Chart.vue";
 
 import ChartFactory from "~/lib/chartFactory";
 import ChartBaseData from "~/lib/types/chart";
+import ManagementPage from "~/pages/ManagementPage.vue";
 
 
 const data = ref([3, 4, 1, 6, 8]);
@@ -21,9 +22,9 @@ const RadarChart: ChartBaseData = ChartFactory.createChart("radar");
 
 
 <template>
-  <Chart :data-values="data" :data-labels="dataLabels" :chart-data="DoughnutChart"></Chart>
-  <Chart :data-values="data" :data-labels="dataLabels" :chart-data="RadarChart"></Chart>
-  <PlaceCard></PlaceCard>
+  <!--<Chart :data-values="data" :data-labels="dataLabels" :chart-data="DoughnutChart"></Chart> -->
+  <!-- <Chart :data-values="data" :data-labels="dataLabels" :chart-data="RadarChart"></Chart> -->
+  <ManagementPage></ManagementPage>
 </template>
 
 <style scoped>

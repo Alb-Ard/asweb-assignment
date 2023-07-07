@@ -1,13 +1,21 @@
 <script setup lang="ts">
-  const starRating = ref(3.5);
 
-  const image = ref("https://www.corriereromagna.it/wp-content/uploads/2021/06/cesena-turismo.jpg");
+
+  const props =defineProps<{
+    image: string,
+    starRating: number,
+  }>();
+
+
+  //const starRating = ref(3.5);
+
+  //const image = ref("https://www.corriereromagna.it/wp-content/uploads/2021/06/cesena-turismo.jpg");
 
   function renderStarRating(fullStar: number, halfStar: number): string {
-    return (starRating.value >= fullStar) ? 'fa fa-star' : ((starRating.value >= halfStar) ? 'fa fa-star-half-full' : 'fa fa-star-o')
+    return (props.starRating >= fullStar) ? 'fa fa-star' : ((props.starRating >= halfStar) ? 'fa fa-star-half-full' : 'fa fa-star-o')
   }
 
-  function replaceIfMissing(event: Event) {
+  function replaceIfMissing(event: ErrorEvent) {
     (event.target as HTMLImageElement).src = "https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg";
   }
 
@@ -28,17 +36,25 @@
 </template>
 
 <style scoped>
-  .card {
-    width: 30%;
-    padding: 2px;
-    border-radius: 10px;
-  }
+
   img {
     width: 100%;
+    height: 300px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
 
+  img:hover {
+    cursor: pointer;
+  }
+
+  .card {
+    display: inline-block;
+    width: 20%;
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-bottom: 20px;
+  }
 
   .review {
     background-color: cornflowerblue;
@@ -51,7 +67,6 @@
     width: 25px;
     height: 20px;
     font-size: 40px;
-    display: inline-block;
     color: gold;
     margin-left: 10px;
     margin-right: 30px;
