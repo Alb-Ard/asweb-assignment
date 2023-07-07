@@ -17,7 +17,6 @@
                     {{ place.name }}
                     <img v-if="place.photoSrcs.length > 0" v-bind:src="place.photoSrcs.at(0)" />
                 </Button>
-                <Button color="danger" v-on:click="emit('testRemove', place.id)">X</Button>
             </li>
         </ol>
     </section>
@@ -38,8 +37,7 @@ const intersectedPlacesCount = ref(0);
 
 const emit = defineEmits<{
     (event: "requestPlaces"): void
-    (event: "placeFocused", placeId: string): void,
-    (event: "testRemove", placeId: string): void
+    (event: "placeFocused", placeId: string): void
 }>();
 
 const searchPlaces = (searchString: string) => nameFilter.value = searchString;

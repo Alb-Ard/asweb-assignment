@@ -9,8 +9,7 @@
                     v-if="!!!focusedPlace"
                     v-bind:places="places"
                     v-on:request-places="handleRequestPlaces" 
-                    v-on:place-focused="handlePlaceFocused" 
-                    v-on:test-remove="removeTestPlace"
+                    v-on:place-focused="handlePlaceFocused"
                 />
                 <UserFocusedPlaceSection
                     v-else
@@ -20,7 +19,6 @@
             </Transition>
         </div>
         <section>
-            <Button v-on:click="addTestPlace">Add Test Place</Button>
             <UserPlacesMap 
                 v-bind:places="places" 
                 v-bind:focused-index="focusedPlaceId"
@@ -40,9 +38,6 @@ const focusedPlace = computed(() => focusedPlaceId.value !== undefined && !!plac
 
 const handleRequestPlaces = () => placesStore.fetchNextAsync();
 const handlePlaceFocused = (id: string | undefined) => focusedPlaceId.value = id;
-
-const addTestPlace = () => placesStore.createPlaceAsync("Test", [47.41322, -1.219482]);
-const removeTestPlace = (id: string) => placesStore.deletePlaceAsync(id);
 
 onMounted(() => initializeIfEmpty(() => placesStore.places, placesStore));
 </script>
