@@ -24,10 +24,11 @@
                             v-on:dragend="e => dragDrop.onDropEvent(place, e)"
                         >
                             <Panel>
-                                = {{ place.name }}
+                                = {{ place.name }} <Button color="danger">X</Button>
                             </Panel>
                         </li>
                     </ol>
+                    <Button v-bind:full-width="true" color="primary" v-on:click="placePickerVisible = true">+</Button>
                 </section>
                 <Button 
                     v-bind:full-width="true"
@@ -51,6 +52,11 @@
             <RouterLink to="/login">Log in</RouterLink> or <RouterLink to="/register">Sign up</RouterLink> to create itineraries!
         </p>
     </main>
+    <UserAddItineraryPlaceDialog 
+        v-bind:open="placePickerVisible"
+        v-on:closed="placePickerVisible = false"
+        v-on:place-selected="addPlaceAsync"
+    />
 </template>
 
 <script setup lang="ts">
@@ -59,10 +65,12 @@ import { MapPlace } from 'components/UserPlacesMap.vue';
 const route = useRoute();
 const authentication = useAuthentication();
 const itinerariesStore = useItinerariesStore();
-const itineraries = computed(() => itinerariesStore.itineraries);
 const itineraryId = ref(route.params.id as string);
-const itinerary = computed(() => itineraries.value?.find(i => i.id === itineraryId.value));
+const itinerary = computed(() => itinerariesStore.itineraries?.find(i => i.id === itineraryId.value));
 const listExpanded = ref(false);
+const placePickerVisible = ref(false);
+
+const addPlaceAsync = async (placeId: string) => itinerariesStore.addPlaceAsync(itineraryId.value, placeId);
 
 const handlePlacesReorderedAsync = async (draggedPlace: MapPlace, targetPlace: MapPlace) => {
     if (!!!itinerary.value?.places) {
@@ -73,7 +81,7 @@ const handlePlacesReorderedAsync = async (draggedPlace: MapPlace, targetPlace: M
 
 const dragDrop = useDragDrop("itineraryPlace", handlePlacesReorderedAsync);
 
-watchEffect(() => itinerariesStore.fetchOneAsync(itineraryId.value));
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && itinerariesStore.fetchOneAsync(itineraryId.value); }, { immediate: true });
 </script>
 
 <style scoped>
@@ -93,6 +101,10 @@ main > header {
 section:first-child {
     padding: 1rem;
     overflow: auto;
+}
+
+ol {
+    margin-bottom: 1rem;
 }
 
 li {

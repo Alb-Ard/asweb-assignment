@@ -25,7 +25,8 @@
 const itinerariesStore = useItinerariesStore();
 const itineraries = computed(() => itinerariesStore.itineraries);
 const authentication = useAuthentication();
-onMounted(() => itinerariesStore.fetchAsync(0));
+
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && itinerariesStore.fetchAsync(0); }, { immediate: true });
 </script>
 
 <style scoped>

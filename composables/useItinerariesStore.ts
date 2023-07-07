@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl } from "~/lib/api";
 import { defineStore } from "pinia";
 import Itinerary from "~/lib/types/itinerary";
 
@@ -10,65 +11,60 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         if (!!!authentication.userStore.userData) {
             return;
         }
-        const itineraryPlaces = [
-            {
-                id: "0",
-                name: "Place 0",
-                location: [47.42022, -1.219482] as [number, number]
-            },
-            {
-                id: "1",
-                name: "Place 1",
-                location: [47.52022, -1.319482] as [number, number]
-            },
-            {
-                id: "2",
-                name: "Place 2",
-                location: [47.48022, -1.299482] as [number, number]
-            },
-            {
-                id: "3",
-                name: "Place 3",
-                location: [47.62022, -1.219482] as [number, number]
-            },
-            {
-                id: "4",
-                name: "Place 4",
-                location: [47.42922, -1.279482] as [number, number]
-            }
-        ];
 
-        const newItineraries = [
-            {
-                id: "0",
-                name: "Trip 1",
-                places: [...itineraryPlaces],
-            },
-            {
-                id: "1",
-                name: "Trip 2",
-                places: [...itineraryPlaces],
-            },
-            {
-                id: "2",
-                name: "Trip 3",
-                places: [...itineraryPlaces],
-            }
-        ];
-
+        const response = await axios.get<Itinerary[]>(getApiUrl("itinerary") + "?page=" + page, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return;
+        }
         if (!!!itineraries.value) {
-            itineraries.value = [...newItineraries];
+            itineraries.value = [...response.data];
         } else {
-            newItineraries.forEach(addItinerary);
+            response.data.forEach(addItinerary);
         }
     }
 
     const fetchOneAsync = async (id: string) => {
-        // TODO: fetch
+        if (!!!authentication.userStore.userData) {
+            return;
+        }
+
+        const response = await axios.get<Itinerary>(getApiUrl("itinerary") + "/" + id, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return;
+        }
+        if (!!!itineraries.value) {
+            itineraries.value = [response.data];
+        } else {
+            addItinerary(response.data);
+        }
     }
 
     const swapPlacesAsync = async (itineraryId: string, firstId: string, secondId: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
         // TODO: swap and fetch again
+    }
+
+    const addPlaceAsync = async (itineraryId: string, placeId: string) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+
+        const response = await axios.put(getApiUrl("itinerary") + "/" + itineraryId + "/places", {
+            id: placeId
+        }, {
+            withCredentials: true
+        });
+        if (response.status !== 200) {
+            return false;
+        }
+        await fetchOneAsync(itineraryId);
+        return true;
     }
 
     const addItinerary = (newItinerary: Itinerary) => {
@@ -94,5 +90,6 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         fetchAsync,
         fetchOneAsync,
         swapPlacesAsync,
+        addPlaceAsync,
     };
 });

@@ -21,8 +21,8 @@
                 <h3>Photos</h3>
             </header>
             <ul class="place-images-list">
-                <li v-for="i in [1000, 100, 900]">
-                    <img v-bind:src="`https://picsum.photos/id/${i}/200`" />
+                <li v-for="src in place.photoSrcs">
+                    <img v-bind:src="src" />
                 </li>
             </ul>
         </section>

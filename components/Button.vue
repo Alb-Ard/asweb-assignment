@@ -1,5 +1,5 @@
 <template>
-    <button v-bind="$attrs" v-bind:style="[...colors, borderRadius, width, ...instanceStyles]">
+    <button v-bind="$attrs" v-bind:style="[...colors, borderRadius, size, ...instanceStyles]">
         <span class="icon-container">
             <slot name="icon-left"></slot>
         </span>
@@ -39,7 +39,7 @@ const colors = computed(() => props.flat ? [
     `--background-color-hover: var(--color-${props.color ?? "grey"}-${colorLevels.value[2]})`,
 ]);
 const borderRadius = computed(() => `--border-radius: ${Number.parseInt(props.radius ?? "1") / 2}rem`);
-const width = computed(() => `--width: ${props.fullWidth ? "100%" : "auto"}`);
+const size = computed(() => `--width: ${props.fullWidth ? "100%" : "auto"}`);
 const instanceStyles = computed(() => props.style instanceof Array ? props.style : [props.style ?? ""]);
 </script>
 
