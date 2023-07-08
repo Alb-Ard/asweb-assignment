@@ -1,7 +1,7 @@
 <template>
     <main>
         <p v-if="!!!authentication.userStore.userData">
-            <RouterLink to="/login">Log in</RouterLink> or <RouterLink to="/register">Sign up</RouterLink> to create itineraries!
+            <NuxtLink to="/login">Log in</NuxtLink> or <NuxtLink to="/register">Sign up</NuxtLink> to create itineraries!
         </p>
         <p v-else-if="!!!itinerary">Loading...</p>
         <template v-else>
@@ -102,23 +102,23 @@ const isRenaming = ref(false);
 const isLoading = ref(false);
 const newName = ref("");
 
-const handleAddPlace = (placeId: string) => whileLoadingAsync(isLoading, itinerariesStore.addPlaceAsync(itineraryId.value, placeId));
-const handleRemovePlace = (placeId: string) => whileLoadingAsync(isLoading, itinerariesStore.removePlaceAsync(itineraryId.value, placeId));
-const handleDelete = () => whileLoadingAsync(isLoading, itinerariesStore.deleteAsync(itineraryId.value).then(() => { navigateTo("/itineraries"); }));
+const handleAddPlace = (placeId: string) => whileLoadingAsync(isLoading, itinerariesStore.addPlaceAsync(itineraryId.value, placeId), false);
+const handleRemovePlace = (placeId: string) => whileLoadingAsync(isLoading, itinerariesStore.removePlaceAsync(itineraryId.value, placeId), false);
+const handleDelete = () => whileLoadingAsync(isLoading, itinerariesStore.deleteAsync(itineraryId.value).then(success => { success && navigateTo("/itineraries"); }), null);
 const handlePlacesReorderedAsync = async (draggedPlace: MapPlace, targetPlace: MapPlace) => {
     if (!!!itinerary.value?.places) {
         return;
     }
-    await whileLoadingAsync(isLoading, itinerariesStore.swapPlacesAsync(itineraryId.value, draggedPlace._id, targetPlace._id));
+    await whileLoadingAsync(isLoading, itinerariesStore.swapPlacesAsync(itineraryId.value, draggedPlace._id, targetPlace._id), false);
 }
 
 const dragDrop = useDragDrop("itineraryPlace", handlePlacesReorderedAsync);
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, itinerariesStore.fetchOneAsync(itineraryId.value)); }, { immediate: true });
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, itinerariesStore.fetchOneAsync(itineraryId.value), null); }, { immediate: true });
 watchEffect(() => newName.value = itinerary.value?.name ?? "");
 watch(isRenaming, (isNowRenaming, wasRenaming) => {
     if (wasRenaming && !isNowRenaming) {
-        whileLoadingAsync(isLoading, itinerariesStore.updateAsync({ _id: itineraryId.value, name: newName.value }));
+        whileLoadingAsync(isLoading, itinerariesStore.updateAsync({ _id: itineraryId.value, name: newName.value }), false);
     }
 });
 </script>

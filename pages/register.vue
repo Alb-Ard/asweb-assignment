@@ -1,40 +1,82 @@
 <template>
-    <Panel class="loginPage">
-        <div class="loginData">
-        <h3>Username:</h3>
-        <input placeholder="Username here">
-        <h3>Password:</h3>
-        <input type="password" placeholder="Password here">
-        </div>
-        <NuxtLink class="changePage" to="login">Already registered? Click here!</NuxtLink>
-        <Button class="sendData">Register</Button>
+    <Panel level="800" class="register-panel">
+        <form action="#" method="post" v-on:submit.prevent="registerAsync">
+            <h2>Register</h2>
+            <Panel v-if="hasRegisterFailed" color="danger" class="error-panel">
+                <p>Incorrect data input! Please try again</p>
+            </Panel>
+            <InputLabel class="form-label" for="name" text="Username" required />
+            <InputField v-model="username" type="text" id="name" placeholder="Insert your name here" required />
+            <InputLabel class="form-label" for="email" text="Email" required />
+            <InputField v-model="email" type="email" id="email" placeholder="Insert your mail here" required />
+            <InputLabel class="form-label" for="password" text="Password" required />
+            <InputField v-model="password" type="password" id="password" placeholder="Insert your password here" required />
+            <Button 
+                v-bind:disabled="isLoading"
+                v-bind:full-width="true"
+                color="primary"
+                class="register-button"
+                type="submit"
+            >
+                Register
+            </Button>
+            <ButtonLink 
+                v-bind:disabled="isLoading"
+                v-bind:flat="true"
+                to="/login"
+            >
+                Already registered? Click here!
+            </ButtonLink>
+        </form>
     </Panel>  
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { whileLoadingAsync } from "~/lib/dataStore";
 
-    .loginPage {
-        margin: 100px;
+const authentication = useAuthentication();
+const username = ref("");
+const email = ref("");
+const password = ref("");
+const isLoading = ref(false);
+const hasRegisterFailed = ref(false);
+
+const registerAsync = async () => {
+    await whileLoadingAsync(isLoading, authentication.registerAsync(username.value, email.value, password.value));
+    hasRegisterFailed.value = !!!authentication.userStore.userData;
+    if (!hasRegisterFailed.value) {
+        navigateTo("/");
     }
-    .loginData {
-        margin: 20px;
+ };
+</script>
+
+<style scoped>
+    input {
+        padding: 1rem;
+        width: 100%;
+        font-family: inherit;
+        border: 1px solid var(--color-grey-100);
+        color: var(--color-foreground);
+        background-color: var(--color-background);
+        border-radius: 4px;
+        box-sizing: border-box;
     }
-    .sendData {
-        margin: auto;
-        margin-top: 10px;
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
     }
-    input{
-        margin-left: 44%;
-        margin-bottom: 20px;
+
+    .register-panel {
+        margin-inline: auto;
+        width: min(95vw, 32rem);
     }
-    .changePage, h3 {
+
+    .register-button, label, h2, p {
         text-align: center;
-        text-shadow: 2cm;
-        margin-bottom: 20px;
     }
-    .changePage {
-        color: white;
-        background-color: grey;
-        margin-left:41%;
+
+    .register-button, .error-panel, h2, input {
+        margin-bottom: 1rem;
     }
 </style>

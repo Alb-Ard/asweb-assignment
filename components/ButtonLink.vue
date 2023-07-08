@@ -73,6 +73,8 @@ const instanceStyles = computed(() => props.style instanceof Array ? props.style
     width: var(--width);
 }
 
+.link:hover:disabled,
+.link:focus:disabled,
 .link:disabled {
     background-color: var(--background-color-disabled);
     color: var(--color-disabled);

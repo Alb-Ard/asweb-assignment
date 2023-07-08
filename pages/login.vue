@@ -1,40 +1,69 @@
 <template>
-    <Panel class="loginPage">
-        <div class="loginData">
-        <h3>Username:</h3>
-        <input placeholder="Username here">
-        <h3>Password:</h3>
-        <input type="password" placeholder="Password here">
-        </div>
-        <NuxtLink class="changePage" to="register">Are you not registered? Click here!</NuxtLink>
-        <Button class="sendData">Log In</Button>
+    <Panel level="800" class="login-panel">
+        <form action="#" method="post" v-on:submit.prevent="loginAsync">
+            <h2>Login</h2>
+            <Panel v-if="hasLoginFailed" color="danger" class="error-panel">
+                <p>Incorrect data input! Please try again</p>
+            </Panel>
+            <InputLabel class="form-label" for="email" text="Email" />
+            <InputField v-model="email" type="email" id="email" placeholder="Insert your mail here" required />
+            <InputLabel class="form-label" for="password" text="Password" />
+            <InputField v-model="password" type="password" id="password" placeholder="Insert your password here" required />
+            <Button 
+                v-bind:disabled="isLoading"
+                v-bind:full-width="true"
+                type="submit"
+                color="primary"
+                class="login-button"
+            >
+                Log In
+            </Button>
+            <ButtonLink 
+                v-bind:disabled="isLoading"
+                v-bind:flat="true"
+                to="/register"
+            >
+                Need to register? Click here!
+            </ButtonLink>
+        </form>
     </Panel>  
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { whileLoadingAsync } from "~/lib/dataStore";
 
-    .loginPage {
-        margin: 100px;
+const authentication = useAuthentication();
+const email = ref("");
+const password = ref("");
+const isLoading = ref(false);
+const hasLoginFailed = ref(false);
+
+const loginAsync = async () => {
+    await whileLoadingAsync(isLoading, authentication.loginAsync(email.value, password.value), null);
+    hasLoginFailed.value = !!!authentication.userStore.userData;
+    if(!hasLoginFailed.value) {
+        history.back();
     }
-    .loginData {
-        margin: 20px;
+}
+
+</script>
+
+<style scoped>
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
     }
-    .sendData {
-        margin: auto;
-        margin-top: 10px;
+
+    .login-panel {
+        margin-inline: auto;
+        width: min(95vw, 32rem);
     }
-    input{
-        margin-left: 44%;
-        margin-bottom: 20px;
-    }
-    .changePage, h3 {
+
+    .login-button, label, h2, p {
         text-align: center;
-        text-shadow: 2cm;
-        margin-bottom: 20px;
     }
-    .changePage {
-        color: white;
-        background-color: grey;
-        margin-left:40%;
+
+    .login-button, .error-panel, h2, input {
+        margin-bottom: 1rem;
     }
 </style>

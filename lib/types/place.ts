@@ -7,7 +7,16 @@ interface Place {
     readonly description: string,
     readonly location: [number, number],
     readonly photoSrcs: string[],
-    readonly reviews: string[],
+    readonly reviews: PlaceReview[],
 };
 
+interface PlaceReview {
+    readonly _id: string,
+    readonly user: Owner,
+    readonly star: number,
+}
+
 export default Place;
+export {
+    PlaceReview
+};

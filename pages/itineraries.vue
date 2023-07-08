@@ -2,7 +2,7 @@
     <main>
         <h2>Your itineraries</h2>
         <p v-if="!!!authentication.userStore.userData">
-            <RouterLink to="/login">Log in</RouterLink> or <RouterLink to="/register">Sign up</RouterLink> to create itineraries!
+            <NuxtLink to="/login">Log in</NuxtLink> or <NuxtLink to="/register">Sign up</NuxtLink> to create itineraries!
         </p>
         <p v-else-if="!!!itineraries">Loading...</p>
         <template v-else>
@@ -49,7 +49,7 @@ const authentication = useAuthentication();
 const intersectedItinerariesCount = ref(0);
 const isLoading = ref(false);
 
-const handleAddItinerary = () => whileLoadingAsync(isLoading, itinerariesStore.createAsync("New Itinerary"));
+const handleAddItinerary = () => whileLoadingAsync(isLoading, itinerariesStore.createAsync("New Itinerary"), false);
 const handleItineraryIntersectionChanged = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
     entries.forEach(entry => {
         if (!!!itineraries.value) {
@@ -65,7 +65,7 @@ const handleItineraryIntersectionChanged = (entries: IntersectionObserverEntry[]
     });
 };
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => itinerariesStore.itineraries, itinerariesStore)); }, { immediate: true });
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => itinerariesStore.itineraries, itinerariesStore), null); }, { immediate: true });
 </script>
 
 <style scoped>

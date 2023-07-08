@@ -7,17 +7,17 @@
         <input type="text" id="searchPlaceName" placeholder="Search..." v-on:input="handleInputModified" />
         <ol>
             <li 
-                v-for="(place, placeIndex) in filteredPlaces"
+                v-for="place in filteredPlaces"
                 v-bind:key="place._id"
                 v-intersection-observer="handleObservedPlacesChanged"
             >
-                <Button 
-                    v-bind:full-width="true" 
-                    v-on:click="handlePlaceClicked(place._id)"
-                    >
-                    {{ place.name }}
-                    <img v-if="place.photoSrcs.length > 0" v-bind:src="place.photoSrcs.at(0)" />
-                </Button>
+                <PlaceCard 
+                    v-bind:name="place.name"
+                    v-bind:image="place.photoSrcs.at(0)"
+                    v-bind:star-rating="place.reviews.reduce((p, c) => p + c.star, 0) / place.reviews.length"
+                    to="/"
+                    v-on:click.prevent="handlePlaceClicked(place._id)"
+                />
             </li>
         </ol>
     </section>
@@ -81,9 +81,15 @@ img {
     max-width: 100%;
 }
 
-input {
+input{
+    padding: 1rem;
     width: 100%;
-    margin-block: 0.5rem;
-    padding: 0.5rem;
+    font-family: inherit;
+    border: 1px solid var(--color-grey-100);
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
 }
 </style>

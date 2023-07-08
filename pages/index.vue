@@ -1,27 +1,15 @@
 <template>
-    <main
+    <main 
         v-if="!!places"
         v-bind:class="!!focusedPlace ? 'place-focused' : ''"
     >
-        <div class="places-sidebar-section">
-            <Transition mode="out-in">
-                <UserPlacesSection
-                    v-if="!!!focusedPlace"
-                    v-bind:places="places"
-                    v-on:request-places="handleRequestPlaces" 
-                    v-on:place-focused="handlePlaceFocused"
-                />
-                <UserFocusedPlaceSection
-                    v-else
-                    v-bind:place="focusedPlace"
-                    v-on:back-pressed="handlePlaceFocused(undefined)"
-                />
-            </Transition>
+        <div v-bind:class="['places-sidebar']">
+            <NuxtPage />
         </div>
         <section>
             <UserPlacesMap 
                 v-bind:places="places" 
-                v-bind:focused-index="focusedPlaceId"
+                v-bind:focused-id="focusedPlaceId"
                 v-on:place-focused="handlePlaceFocused"
             />
         </section>
@@ -31,13 +19,13 @@
 <script setup lang="ts">
 import { initializeIfEmptyAsync } from "~/lib/dataStore";
 
+const route = useRoute();
 const placesStore = usePlacesStore();
 const places = computed(() => placesStore.places);
-const focusedPlaceId = ref<string>();
+const focusedPlaceId = computed(() => route.params.id as string);
 const focusedPlace = computed(() => focusedPlaceId.value !== undefined && !!places.value ? places.value.find(p => p._id === focusedPlaceId.value) : undefined);
 
-const handleRequestPlaces = () => placesStore.fetchNextAsync();
-const handlePlaceFocused = (id: string | undefined) => focusedPlaceId.value = id;
+const handlePlaceFocused = (placeId: string | undefined) => navigateTo("/place/" + placeId);
 
 onMounted(() => initializeIfEmptyAsync(() => placesStore.places, placesStore));
 </script>
@@ -51,7 +39,7 @@ main {
     display: grid;
     height: 100%;
     grid-template-columns: 16rem 1fr;
-    transition: grid-template-columns var(--show-place-info-duration) var(--show-place-info-duration) ease-in-out;
+    transition: grid-template-columns var(--show-place-info-duration) ease-in-out;
 }
 
 main.place-focused {

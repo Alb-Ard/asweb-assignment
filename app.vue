@@ -5,19 +5,18 @@
             <UserNavbar />
         </header>
         <div class="page-container">
-          <NuxtPage />
+            <NuxtPage/>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import useAuthentication from "~/composables/useAuthentication";
-
-
+import DashBoard from "~/pages/DashBoard.vue";
 
 const authentication = useAuthentication();
 
-onMounted(() => authentication.renew());
+onMounted(() => authentication.renewAsync());
 </script>
 
 <style scoped>

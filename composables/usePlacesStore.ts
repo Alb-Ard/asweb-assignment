@@ -71,6 +71,24 @@ export const usePlacesStore = defineStore("places", () => {
         return true;
     }
 
+    const updateReviewAsync = async (placeId: string, star: number) => {
+        if (!!!authentication.userStore.userData) {
+            return false;
+        }
+        const response = star > 0 ? await axios.post<string>(getApiUrl("place") + "/" + placeId + "/review", {
+                star: star
+            }, {
+                withCredentials: true
+            }) : await axios.delete(getApiUrl("place") + "/" + placeId + "/review", {
+                withCredentials: true
+            });
+        if (response.status !== 200) {
+            return false;
+        }
+        await fetchOneAsync(placeId);
+        return true;
+    }
+
     const addPlace = (newPlace: Place) => {
         if (!!!places.value) {
             places.value = [];
@@ -89,6 +107,7 @@ export const usePlacesStore = defineStore("places", () => {
         fetchOneAsync,
         createAsync,
         updateAsync,
+        updateReviewAsync,
         deleteAsync,
     };
 });

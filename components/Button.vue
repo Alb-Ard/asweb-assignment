@@ -71,6 +71,8 @@ button {
     width: var(--width);
 }
 
+button:hover:disabled,
+button:focus:disabled,
 button:disabled {
     background-color: var(--background-color-disabled);
     color: var(--color-disabled);

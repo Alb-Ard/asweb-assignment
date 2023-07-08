@@ -53,7 +53,10 @@ export const useItinerariesStore = defineStore("itineraries", () => {
             return false;
         }
 
-        const response = await axios.post<string>(getApiUrl("itinerary"), { name: name, owner: authentication.userStore.userData._id }, {
+        const response = await axios.post<string>(getApiUrl("itinerary"), {
+            name: name,
+            owner: authentication.userStore.userData._id
+        }, {
             withCredentials: true
         });
         if (response.status !== 200) {
