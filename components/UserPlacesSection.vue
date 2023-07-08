@@ -3,16 +3,17 @@
         <header>
             <h2>Places</h2>
         </header>
+        <label for="searchPlaceName">Search by name:</label>
         <input type="text" id="searchPlaceName" placeholder="Search..." v-on:input="handleInputModified" />
         <ol>
             <li 
                 v-for="(place, placeIndex) in filteredPlaces"
-                v-bind:key="place.id"
+                v-bind:key="place._id"
                 v-intersection-observer="handleObservedPlacesChanged"
             >
                 <Button 
                     v-bind:full-width="true" 
-                    v-on:click="handlePlaceClicked(place.id)"
+                    v-on:click="handlePlaceClicked(place._id)"
                     >
                     {{ place.name }}
                     <img v-if="place.photoSrcs.length > 0" v-bind:src="place.photoSrcs.at(0)" />
@@ -32,7 +33,7 @@ const props = defineProps<{
 
 const searchTimeout = ref();
 const nameFilter = ref<string>("");
-const filteredPlaces = computed(() => props.places?.filter(p => p.name.includes(nameFilter.value)));
+const filteredPlaces = computed(() => props.places?.filter(p => p.name.toLowerCase().includes(nameFilter.value.toLowerCase())));
 const intersectedPlacesCount = ref(0);
 
 const emit = defineEmits<{
@@ -78,5 +79,11 @@ li:where(:not(:last-of-type)) {
 img {
     margin-top: 0.5rem;
     max-width: 100%;
+}
+
+input {
+    width: 100%;
+    margin-block: 0.5rem;
+    padding: 0.5rem;
 }
 </style>

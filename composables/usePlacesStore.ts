@@ -34,7 +34,7 @@ export const usePlacesStore = defineStore("places", () => {
         }
         const response = await axios.post<string>(getApiUrl("place"), {
             name: name,
-            owner: authentication.userStore.userData.id,
+            owner: authentication.userStore.userData._id,
             location: location,
         }, {
             withCredentials: true
@@ -46,14 +46,14 @@ export const usePlacesStore = defineStore("places", () => {
         return true;
     }
 
-    const updateAsync = async (place: Partial<Place> & { id: string }) => {
-        const { id: placeId, ...placeData } = place;
+    const updateAsync = async (place: Partial<Place> & { _id: string }) => {
+        const { _id: placeId, ...placeData } = place;
         const response = await axios.patch(getApiUrl("place") + "/" + placeId, placeData, {
             withCredentials: true
         });
         if (response.status !== 200) {
             return false;
-        } else if (places.value?.some(p => p.id === placeId)) {
+        } else if (places.value?.some(p => p._id === placeId)) {
             await fetchOneAsync(placeId);
         }
         return true;
@@ -65,8 +65,8 @@ export const usePlacesStore = defineStore("places", () => {
         });
         if (response.status !== 200) {
             return false;
-        } else if (places.value?.some(p => p.id === id)) {
-            places.value = places.value.filter(p => p.id !== id);
+        } else if (places.value?.some(p => p._id === id)) {
+            places.value = places.value.filter(p => p._id !== id);
         }
         return true;
     }
@@ -75,7 +75,7 @@ export const usePlacesStore = defineStore("places", () => {
         if (!!!places.value) {
             places.value = [];
         }
-        const existingPlace = places.value.find(i => i.id === newPlace.id);
+        const existingPlace = places.value.find(i => i._id === newPlace._id);
         if (!!existingPlace) {
             Object.assign(existingPlace, newPlace);
         } else {

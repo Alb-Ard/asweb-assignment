@@ -1,6 +1,4 @@
-export interface DragDropElement {
-    readonly id: string,
-}
+export type DragDropElement = { readonly id: string } | { readonly _id: string };
 
 export interface DragDropData {
     readonly type: string,

@@ -41,7 +41,7 @@
                             v-on:dragend="e => dragDrop.onDropEvent(place, e)"
                         >
                             <Panel>
-                                = {{ place.name }} <Button color="danger">X</Button>
+                                = {{ place.name }} <Button color="danger" v-on:click="handleRemovePlace(place._id)">X</Button>
                             </Panel>
                         </li>
                     </ol>
@@ -71,50 +71,54 @@
                     />
                 </section>
             </div>
+            <UserAddItineraryPlaceDialog 
+                v-bind:open="isPlacePickerVisible"
+                v-on:closed="isPlacePickerVisible = false"
+                v-on:place-selected="handleAddPlace"
+            />
+            <Fab
+                v-bind:disabled="isLoading"
+                color="primary"
+                v-on:click="isPlacePickerVisible = true"
+            >
+                +
+            </Fab>
         </template>
     </main>
-    <UserAddItineraryPlaceDialog 
-        v-bind:open="isPlacePickerVisible"
-        v-on:closed="isPlacePickerVisible = false"
-        v-on:place-selected="handleAddPlace"
-    />
 </template>
 
 <script setup lang="ts">
 import { MapPlace } from "components/UserPlacesMap.vue";
+import { whileLoadingAsync } from "~/lib/dataStore";
 
 const route = useRoute();
 const authentication = useAuthentication();
 const itinerariesStore = useItinerariesStore();
 const itineraryId = ref(route.params.id as string);
-const itinerary = computed(() => itinerariesStore.itineraries?.find(i => i.id === itineraryId.value));
+const itinerary = computed(() => itinerariesStore.itineraries?.find(i => i._id === itineraryId.value));
 const isListExpanded = ref(false);
 const isPlacePickerVisible = ref(false);
 const isRenaming = ref(false);
 const isLoading = ref(false);
 const newName = ref("");
 
-const awaitWhileLoading = <T>(promise: Promise<T>) => {
-    isLoading.value = true;
-    return promise.then(() => isLoading.value = false);
-}
-
-const handleAddPlace = (placeId: string) => awaitWhileLoading(itinerariesStore.addPlaceAsync(itineraryId.value, placeId));
-const handleDelete = () => awaitWhileLoading(itinerariesStore.deleteAsync(itineraryId.value).then(() => { navigateTo("/itineraries"); }));
+const handleAddPlace = (placeId: string) => whileLoadingAsync(isLoading, itinerariesStore.addPlaceAsync(itineraryId.value, placeId));
+const handleRemovePlace = (placeId: string) => whileLoadingAsync(isLoading, itinerariesStore.removePlaceAsync(itineraryId.value, placeId));
+const handleDelete = () => whileLoadingAsync(isLoading, itinerariesStore.deleteAsync(itineraryId.value).then(() => { navigateTo("/itineraries"); }));
 const handlePlacesReorderedAsync = async (draggedPlace: MapPlace, targetPlace: MapPlace) => {
     if (!!!itinerary.value?.places) {
         return;
     }
-    await awaitWhileLoading(itinerariesStore.swapPlacesAsync(itineraryId.value, draggedPlace.id, targetPlace.id));
+    await whileLoadingAsync(isLoading, itinerariesStore.swapPlacesAsync(itineraryId.value, draggedPlace._id, targetPlace._id));
 }
 
 const dragDrop = useDragDrop("itineraryPlace", handlePlacesReorderedAsync);
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && itinerariesStore.fetchOneAsync(itineraryId.value); }, { immediate: true });
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, itinerariesStore.fetchOneAsync(itineraryId.value)); }, { immediate: true });
 watchEffect(() => newName.value = itinerary.value?.name ?? "");
 watch(isRenaming, (isNowRenaming, wasRenaming) => {
     if (wasRenaming && !isNowRenaming) {
-        awaitWhileLoading(itinerariesStore.updateAsync({ id: itineraryId.value, name: newName.value }));
+        whileLoadingAsync(isLoading, itinerariesStore.updateAsync({ _id: itineraryId.value, name: newName.value }));
     }
 });
 </script>

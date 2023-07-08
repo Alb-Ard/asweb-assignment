@@ -9,10 +9,10 @@
             <ol>
                 <li 
                     v-for="itinerary in itineraries"
-                    v-bind:key="itinerary.id"
+                    v-bind:key="itinerary._id"
                     v-intersection-observer="handleItineraryIntersectionChanged"
                 >
-                    <ButtonLink v-bind:to="`/itinerary/${itinerary.id}`">
+                    <ButtonLink v-bind:to="`/itinerary/${itinerary._id}`">
                         {{ itinerary.name }}
                         <template v-slot:icon-right>
                             {{ ">" }}
@@ -20,21 +20,36 @@
                     </ButtonLink>
                 </li>
             </ol>
-            <Button v-bind:full-width="true" color="primary" v-on:click="handleAddItinerary">+</Button>
+            <Button
+                v-bind:full-width="true"
+                v-bind:disabled="isLoading"
+                color="primary"
+                v-on:click="handleAddItinerary"
+            >
+                +
+            </Button>
         </template>
+        <Fab
+            v-bind:disabled="isLoading"
+            color="primary"
+            v-on:click="handleAddItinerary"
+        >
+            +
+        </Fab>
     </main>
 </template>
 
 <script setup lang="ts">
-import { initializeIfEmpty } from "~/lib/dataStore";
+import { initializeIfEmptyAsync, whileLoadingAsync } from "~/lib/dataStore";
 import { vIntersectionObserver } from "@vueuse/components";
 
 const itinerariesStore = useItinerariesStore();
 const itineraries = computed(() => itinerariesStore.itineraries);
 const authentication = useAuthentication();
 const intersectedItinerariesCount = ref(0);
+const isLoading = ref(false);
 
-const handleAddItinerary = () => itinerariesStore.createAsync("New Itinerary");
+const handleAddItinerary = () => whileLoadingAsync(isLoading, itinerariesStore.createAsync("New Itinerary"));
 const handleItineraryIntersectionChanged = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
     entries.forEach(entry => {
         if (!!!itineraries.value) {
@@ -50,7 +65,7 @@ const handleItineraryIntersectionChanged = (entries: IntersectionObserverEntry[]
     });
 };
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && initializeIfEmpty(() => itinerariesStore.itineraries, itinerariesStore); }, { immediate: true });
+watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => itinerariesStore.itineraries, itinerariesStore)); }, { immediate: true });
 </script>
 
 <style scoped>

@@ -53,7 +53,7 @@ export const useItinerariesStore = defineStore("itineraries", () => {
             return false;
         }
 
-        const response = await axios.post<string>(getApiUrl("itinerary"), { name: name, owner: authentication.userStore.userData.id }, {
+        const response = await axios.post<string>(getApiUrl("itinerary"), { name: name, owner: authentication.userStore.userData._id }, {
             withCredentials: true
         });
         if (response.status !== 200) {
@@ -63,18 +63,18 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         return true;
     }
 
-    const updateAsync = async (itinerary: Partial<Itinerary> & { id: string }) => {
+    const updateAsync = async (itinerary: Partial<Itinerary> & { _id: string }) => {
         if (!!!authentication.userStore.userData) {
             return false;
         }
 
-        const { id: itineraryId, ...itineraryData } = itinerary;
+        const { _id: itineraryId, ...itineraryData } = itinerary;
         const response = await axios.patch(getApiUrl("itinerary") + "/" + itineraryId, itineraryData, {
             withCredentials: true
         });
         if (response.status !== 200) {
             return false;
-        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+        } else if (itineraries.value?.some(p => p._id === itineraryId)) {
             await fetchOneAsync(itineraryId);
         }
         return true;
@@ -91,7 +91,7 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         if (response.status !== 200) {
             return false;
         }
-        itineraries.value = itineraries.value?.filter(i => i.id !== id);
+        itineraries.value = itineraries.value?.filter(i => i._id !== id);
         return true;
     }
 
@@ -107,7 +107,7 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         });
         if (response.status !== 200) {
             return false;
-        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+        } else if (itineraries.value?.some(p => p._id === itineraryId)) {
             await fetchOneAsync(itineraryId);
         }
         return true;
@@ -125,7 +125,7 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         });
         if (response.status !== 200) {
             return false;
-        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+        } else if (itineraries.value?.some(p => p._id === itineraryId)) {
             await fetchOneAsync(itineraryId);
         }
         return true;
@@ -141,7 +141,7 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         });
         if (response.status !== 200) {
             return false;
-        } else if (itineraries.value?.some(p => p.id === itineraryId)) {
+        } else if (itineraries.value?.some(p => p._id === itineraryId)) {
             await fetchOneAsync(itineraryId);
         }
         return true;
@@ -151,7 +151,7 @@ export const useItinerariesStore = defineStore("itineraries", () => {
         if (!!!itineraries.value) {
             itineraries.value = [];
         }
-        const existingItinerary = itineraries.value.find(i => i.id === newItinerary.id);
+        const existingItinerary = itineraries.value.find(i => i._id === newItinerary._id);
         if (!!existingItinerary) {
             Object.assign(existingItinerary, newItinerary);
         } else {

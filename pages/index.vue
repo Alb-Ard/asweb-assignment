@@ -29,17 +29,17 @@
 </template>
 
 <script setup lang="ts">
-import { initializeIfEmpty } from "~/lib/dataStore";
+import { initializeIfEmptyAsync } from "~/lib/dataStore";
 
 const placesStore = usePlacesStore();
 const places = computed(() => placesStore.places);
 const focusedPlaceId = ref<string>();
-const focusedPlace = computed(() => focusedPlaceId.value !== undefined && !!places.value ? places.value.find(p => p.id === focusedPlaceId.value) : undefined);
+const focusedPlace = computed(() => focusedPlaceId.value !== undefined && !!places.value ? places.value.find(p => p._id === focusedPlaceId.value) : undefined);
 
 const handleRequestPlaces = () => placesStore.fetchNextAsync();
 const handlePlaceFocused = (id: string | undefined) => focusedPlaceId.value = id;
 
-onMounted(() => initializeIfEmpty(() => placesStore.places, placesStore));
+onMounted(() => initializeIfEmptyAsync(() => placesStore.places, placesStore));
 </script>
 
 <style scoped>

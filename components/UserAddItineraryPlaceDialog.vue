@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { initializeIfEmpty } from "~/lib/dataStore";
+import { initializeIfEmptyAsync } from "~/lib/dataStore";
 
 const placesStore = usePlacesStore();
 
@@ -52,7 +52,7 @@ watchEffect(() => {
     }
 });
 
-onMounted(() => initializeIfEmpty(() => placesStore.places, placesStore));
+onMounted(() => initializeIfEmptyAsync(() => placesStore.places, placesStore));
 </script>
 
 <style scoped>
