@@ -8,12 +8,12 @@ export default defineNuxtConfig({
             link: [
                 {
                     rel: 'stylesheet',
-                    href: '/reset.css',
+                    href: './reset.css',
                     crossorigin: ''
                 },
                 {
                     rel: 'stylesheet',
-                    href: '/theme.css',
+                    href: './theme.css',
                     crossorigin: ''
                 },
                 {
@@ -23,5 +23,9 @@ export default defineNuxtConfig({
                 }
             ]
         }
-    }
+    },
+    modules: [
+        '@pinia/nuxt',
+        '@vueuse/nuxt',
+    ],
 })
