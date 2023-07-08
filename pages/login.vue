@@ -39,10 +39,10 @@ const isLoading = ref(false);
 const hasLoginFailed = ref(false);
 
 const loginAsync = async () => {
-    await whileLoadingAsync(isLoading, authentication.loginAsync(email.value, password.value));
+    await whileLoadingAsync(isLoading, authentication.loginAsync(email.value, password.value), null);
     hasLoginFailed.value = !!!authentication.userStore.userData;
     if(!hasLoginFailed.value) {
-        navigateTo("/");
+        history.back();
     }
 }
 

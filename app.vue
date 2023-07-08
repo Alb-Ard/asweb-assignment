@@ -14,10 +14,6 @@
 import useAuthentication from "~/composables/useAuthentication";
 import DashBoard from "~/pages/DashBoard.vue";
 
-/*const pageRef = ref();
-
-pageRef.value*/
-
 const authentication = useAuthentication();
 
 onMounted(() => authentication.renewAsync());

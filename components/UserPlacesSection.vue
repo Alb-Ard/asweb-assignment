@@ -7,17 +7,17 @@
         <input type="text" id="searchPlaceName" placeholder="Search..." v-on:input="handleInputModified" />
         <ol>
             <li 
-                v-for="(place, placeIndex) in filteredPlaces"
+                v-for="place in filteredPlaces"
                 v-bind:key="place._id"
                 v-intersection-observer="handleObservedPlacesChanged"
             >
-                <Button 
-                    v-bind:full-width="true" 
-                    v-on:click="handlePlaceClicked(place._id)"
-                    >
-                    {{ place.name }}
-                    <img v-if="place.photoSrcs.length > 0" v-bind:src="place.photoSrcs.at(0)" />
-                </Button>
+                <PlaceCard 
+                    v-bind:name="place.name"
+                    v-bind:image="place.photoSrcs.at(0)"
+                    v-bind:star-rating="place.reviews.reduce((p, c) => p + c.star, 0) / place.reviews.length"
+                    to="/"
+                    v-on:click.prevent="handlePlaceClicked(place._id)"
+                />
             </li>
         </ol>
     </section>
