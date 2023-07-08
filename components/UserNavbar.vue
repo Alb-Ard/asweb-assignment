@@ -8,26 +8,17 @@
                 <NuxtLink to="/itineraries" class="nav-link" v-bind:class="{ current: isPage('itineraries') }">Itineraries</NuxtLink>
             </li>
             <li v-if="showLogin">
-                <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>
-                <template v-else>
-                    <p>{{ authentication.userStore.userData.username }}</p>
-                    <Button v-on:click="logout">Logout</Button>
-                </template>
+                <UserNavbarAuthentication />
             </li>
         </ul>
     </nav>
 </template>
 
 <script setup lang="ts">
-const authentication = useAuthentication();
 const route = useRoute();
 const showLogin = computed(() => !isPage("login") && !isPage("register"));
 
 const isPage = (pageName: string) => route.path === "/" + pageName;
-
-//const showLogin = !location.pathname.includes("/login") && !location.pathname.includes("/register");
-
-const logout = async () => await authentication.logoutAsync();
 </script>
 
 <style scoped>
@@ -46,10 +37,6 @@ li {
 li:nth-child(3) {
     margin-left: auto;
     display: flex;
-}
-
-li:nth-child(3) > * {
-    margin-block: auto;
 }
 
 .nav-link {

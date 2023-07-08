@@ -12,7 +12,7 @@
                 v-bind:lat-lng="place.location" 
                 v-bind:draggable="false"
                 v-bind:visible="focusedId === undefined || focusedId === place._id"
-                v-bind:interactive="focusablePlaces"
+                v-bind:interactive="focusablePlaces ?? true"
                 v-on:click="handlePlaceClicked(place._id)"
             >
                 <LTooltip v-bind:options="tooltipOptions">

@@ -81,9 +81,15 @@ img {
     max-width: 100%;
 }
 
-input {
+input{
+    padding: 1rem;
     width: 100%;
-    margin-block: 0.5rem;
-    padding: 0.5rem;
+    font-family: inherit;
+    border: 1px solid var(--color-grey-100);
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
 }
 </style>

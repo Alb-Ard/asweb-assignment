@@ -60,6 +60,7 @@ dialog {
     --header-height: 3rem;
 
     margin: auto;
+    background-color: var(--color-background);
     display: grid;
     grid-template-rows: var(--header-height) calc(90dvh - var(--header-height));
     width: 90vw;

@@ -1,7 +1,7 @@
 <template>
     <main>
         <p v-if="!!!authentication.userStore.userData">
-            <RouterLink to="/login">Log in</RouterLink> or <RouterLink to="/register">Sign up</RouterLink> to create itineraries!
+            <NuxtLink to="/login">Log in</NuxtLink> or <NuxtLink to="/register">Sign up</NuxtLink> to create itineraries!
         </p>
         <p v-else-if="!!!itinerary">Loading...</p>
         <template v-else>

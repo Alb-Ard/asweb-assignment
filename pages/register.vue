@@ -2,15 +2,15 @@
     <Panel level="800" class="register-panel">
         <form action="#" method="post" v-on:submit.prevent="registerAsync">
             <h2>Register</h2>
-            <Panel v-if="hasLastRegistrationFailed" color="danger" class="error-panel">
+            <Panel v-if="hasRegisterFailed" color="danger" class="error-panel">
                 <p>Incorrect data input! Please try again</p>
             </Panel>
-            <label for="name">Username:</label>
-            <input v-model="username" type="text" id="name" placeholder="Insert your name here" required>
-            <label for="email">Email:</label>
-            <input v-model="email" type="email" id="email" placeholder="Insert your mail here" required>
-            <label for="password">Password:</label>
-            <input v-model="password" type="password" id="password" placeholder="Insert your password here" required>
+            <InputLabel class="form-label" for="name" text="Username" required />
+            <InputField v-model="username" type="text" id="name" placeholder="Insert your name here" required />
+            <InputLabel class="form-label" for="email" text="Email" required />
+            <InputField v-model="email" type="email" id="email" placeholder="Insert your mail here" required />
+            <InputLabel class="form-label" for="password" text="Password" required />
+            <InputField v-model="password" type="password" id="password" placeholder="Insert your password here" required />
             <Button 
                 v-bind:disabled="isLoading"
                 v-bind:full-width="true"
@@ -39,23 +39,18 @@ const username = ref("");
 const email = ref("");
 const password = ref("");
 const isLoading = ref(false);
-const hasLastRegistrationFailed = ref(false);
+const hasRegisterFailed = ref(false);
 
 const registerAsync = async () => {
     await whileLoadingAsync(isLoading, authentication.registerAsync(username.value, email.value, password.value));
-    hasLastRegistrationFailed.value = !!!authentication.userStore.userData;
-    if (!hasLastRegistrationFailed.value) {
+    hasRegisterFailed.value = !!!authentication.userStore.userData;
+    if (!hasRegisterFailed.value) {
         navigateTo("/");
     }
  };
 </script>
 
 <style scoped>
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-
     input {
         padding: 1rem;
         width: 100%;
@@ -65,6 +60,11 @@ const registerAsync = async () => {
         background-color: var(--color-background);
         border-radius: 4px;
         box-sizing: border-box;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
     }
 
     .register-panel {
