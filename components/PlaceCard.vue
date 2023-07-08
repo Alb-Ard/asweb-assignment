@@ -23,7 +23,9 @@
 </script>
 
 <template>
+
   <div class="card">
+    <NuxtLink to="/dashboard">
     <img alt="" :src="image" @error = "replaceIfMissing">
     <div class="review">
         <span :class="renderStarRating(1, 0.5)"></span>
@@ -32,6 +34,7 @@
         <span :class="renderStarRating(4, 3.5)"></span>
         <span :class="renderStarRating(5, 4.5)"></span>
     </div>
+    </NuxtLink>
   </div>
 </template>
 
