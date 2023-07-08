@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { getApiUrl } from "~/lib/api";
 import User from "~/lib/types/user";
 

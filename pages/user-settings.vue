@@ -73,13 +73,13 @@ const censorize = (value: string) => {
 }
 
 const handleSubmitAsync = async () => {
-    hasUpdateFailed.value = !(await whileLoadingAsync(isLoading, authentication.editAsync(newUsername.value, newEmail.value, newPassword.value, currentPassword.value)));
+    hasUpdateFailed.value = !(await whileLoadingAsync(isLoading, authentication.editAsync(newUsername.value, newEmail.value, newPassword.value, currentPassword.value), false));
     if (!hasUpdateFailed.value) {
         isEditEnabled.value = false;
     }
 }
 const handleDeleteAsync = async () => {
-    hasDeleteFailed.value = !(await whileLoadingAsync(isLoading, authentication.deleteAsync()));
+    hasDeleteFailed.value = !(await whileLoadingAsync(isLoading, authentication.deleteAsync(), false));
     if (!hasDeleteFailed.value) {
         navigateTo("/login");
     } 
