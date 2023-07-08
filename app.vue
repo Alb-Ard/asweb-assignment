@@ -12,6 +12,7 @@
 
 <script setup lang="ts">
 import useAuthentication from "~/composables/useAuthentication";
+import DashBoard from "~/pages/DashBoard.vue";
 
 /*const pageRef = ref();
 
