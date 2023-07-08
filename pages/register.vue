@@ -1,33 +1,47 @@
 <template>
     <Panel class="loginPage">
+        <h2>Register</h2>
         <div class="loginData">
-        <h3>Username:</h3>
-        <input placeholder="Username here">
-        <h3>Password:</h3>
-        <input type="password" placeholder="Password here">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Insert your name here">
+        <label for="mail">Email:</label>
+        <input type="email" id="mail" placeholder="Insert your mail here">
+        <label for="pWord">Password:</label>
+        <input type="password" id="pWord" placeholder="Insert your password here">
         </div>
-        <NuxtLink class="changePage" to="login">Already registered? Click here!</NuxtLink>
         <Button class="sendData">Register</Button>
+        <ButtonLink class="changePage" to="/login">Already registered? Click here!</ButtonLink>
     </Panel>  
 </template>
 
 <style scoped>
 
     .loginPage {
-        margin: 100px;
+        margin-left: 200px;
+        margin-right: 200px;
     }
     .loginData {
         margin: 20px;
     }
     .sendData {
         margin: auto;
-        margin-top: 10px;
-    }
-    input{
-        margin-left: 44%;
         margin-bottom: 20px;
     }
-    .changePage, h3 {
+    label {
+        align-self: center;
+        display: block;
+    }
+    input{
+        margin-left: 41%;
+        size: 30px;
+        margin-bottom: 20px;
+        padding: 12px 20px;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    .changePage, label, h2 {
         text-align: center;
         text-shadow: 2cm;
         margin-bottom: 20px;
@@ -35,6 +49,7 @@
     .changePage {
         color: white;
         background-color: grey;
-        margin-left:41%;
+        margin-left:30%;
+        margin-right: 30%;
     }
 </style>

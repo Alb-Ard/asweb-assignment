@@ -25,6 +25,8 @@ const showLogin = computed(() => !isPage("login") && !isPage("register"));
 
 const isPage = (pageName: string) => route.path === "/" + pageName;
 
+//const showLogin = !location.pathname.includes("/login") && !location.pathname.includes("/register");
+
 const logout = async () => await authentication.logout();
 </script>
 

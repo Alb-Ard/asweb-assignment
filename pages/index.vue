@@ -1,9 +1,9 @@
 <template>
-    <main
+    <main 
         v-if="!!places"
         v-bind:class="!!focusedPlace ? 'place-focused' : ''"
     >
-        <div class="places-sidebar-section">
+        <div class="places-sidebar">
             <Transition mode="out-in">
                 <UserPlacesSection
                     v-if="!!!focusedPlace"
