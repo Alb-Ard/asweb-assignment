@@ -1,76 +1,80 @@
 <template>
-    <Panel class="loginPage">
-        <h2>Login</h2>
-        <p v-if="!!login">Incorrect data input! Try again!</p>
-        <div class="loginData">
-        <label for="mail">Email:</label>
-        <input type="email" id="mail" v-model="insertMail" placeholder="Insert your mail here">
-        <label for="pWord">Password:</label>
-        <input type="password" id="pWord" v-model="insertPassword" placeholder="Insert your password here">
-        </div>
-        <Button class="sendData" @click="login">Log In</Button>
-        <ButtonLink class="changePage" to="/register">Need to register? Click here!</ButtonLink>
+    <Panel level="800" class="login-panel">
+        <form action="#" method="post" v-on:submit.prevent="loginAsync">
+            <h2>Login</h2>
+            <Panel v-if="hasLastLoginFailed" color="danger" class="error-panel">
+                <p>Incorrect data input! Please try again</p>
+            </Panel>
+            <label for="email">Email:</label>
+            <input v-model="email" type="email" id="email" placeholder="Insert your mail here" required>
+            <label for="password">Password:</label>
+            <input v-model="password" type="password" id="password" placeholder="Insert your password here" required>
+            <Button 
+                v-bind:disabled="isLoading"
+                v-bind:full-width="true"
+                type="submit"
+                color="primary"
+                class="login-button"
+            >
+                Log In
+            </Button>
+            <ButtonLink 
+                v-bind:disabled="isLoading"
+                v-bind:flat="true"
+                to="/register"
+            >
+                Need to register? Click here!
+            </ButtonLink>
+        </form>
     </Panel>  
 </template>
 
 <script setup lang="ts">
-import useAuthentication from "~/composables/useAuthentication";
+import { whileLoadingAsync } from "~/lib/dataStore";
 
 const authentication = useAuthentication();
+const email = ref("");
+const password = ref("");
+const isLoading = ref(false);
+const hasLastLoginFailed = ref(false);
 
-const insertMail = ref("");
-const insertPassword = ref("");
-
-const login = async () => {
-
-    await authentication.login(insertMail.value, insertPassword.value);
-
-    if(authentication.userStore.userData !== null || authentication.userStore.userData !== undefined) {
+const loginAsync = async () => {
+    await whileLoadingAsync(isLoading, authentication.loginAsync(email.value, password.value));
+    hasLastLoginFailed.value = !!!authentication.userStore.userData;
+    if(!hasLastLoginFailed.value) {
         navigateTo("/");
-    } 
+    }
 }
 
 </script>
 
 <style scoped>
-
-    .loginPage {
-        margin-left: 200px;
-        margin-right: 200px;
-    }
-    .loginData {
-        margin: 20px;
-    }
-    .sendData {
-        margin: auto;
-        margin-bottom: 20px;
-    }
     label {
-        align-self: center;
         display: block;
+        margin-bottom: 0.5rem;
     }
+
     input{
-        margin-left: 41%;
-        size: 30px;
-        margin-bottom: 20px;
-        padding: 12px 20px;
-        display: inline-block;
-        border: 1px solid #ccc;
+        padding: 1rem;
+        width: 100%;
+        font-family: inherit;
+        border: 1px solid var(--color-grey-100);
+        color: var(--color-foreground);
+        background-color: var(--color-background);
         border-radius: 4px;
         box-sizing: border-box;
     }
-    .changePage, label,  h2, p {
+
+    .login-panel {
+        margin-inline: auto;
+        width: min(95vw, 32rem);
+    }
+
+    .login-button, label, h2, p {
         text-align: center;
-        text-shadow: 2cm;
-        margin-bottom: 20px;
     }
-    .changePage {
-        color: white;
-        background-color: grey;
-        margin-left:30%;
-        margin-right: 30%;
+
+    .login-button, .error-panel, h2, input {
+        margin-bottom: 1rem;
     }
-    p {
-        background-color: red;
-    } 
 </style>

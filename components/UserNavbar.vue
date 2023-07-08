@@ -9,10 +9,10 @@
             </li>
             <li v-if="showLogin">
                 <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>
-                <div v-else>
+                <template v-else>
                     <p>{{ authentication.userStore.userData.username }}</p>
                     <Button v-on:click="logout">Logout</Button>
-                </div>
+                </template>
             </li>
         </ul>
     </nav>
@@ -27,7 +27,7 @@ const isPage = (pageName: string) => route.path === "/" + pageName;
 
 //const showLogin = !location.pathname.includes("/login") && !location.pathname.includes("/register");
 
-const logout = async () => await authentication.logout();
+const logout = async () => await authentication.logoutAsync();
 </script>
 
 <style scoped>
@@ -45,6 +45,11 @@ li {
 
 li:nth-child(3) {
     margin-left: auto;
+    display: flex;
+}
+
+li:nth-child(3) > * {
+    margin-block: auto;
 }
 
 .nav-link {

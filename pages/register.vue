@@ -1,55 +1,82 @@
 <template>
-    <Panel class="loginPage">
-        <h2>Register</h2>
-        <div class="loginData">
-        <label for="name">Name:</label>
-        <input type="text" id="name" placeholder="Insert your name here">
-        <label for="mail">Email:</label>
-        <input type="email" id="mail" placeholder="Insert your mail here">
-        <label for="pWord">Password:</label>
-        <input type="password" id="pWord" placeholder="Insert your password here">
-        </div>
-        <Button class="sendData">Register</Button>
-        <ButtonLink class="changePage" to="/login">Already registered? Click here!</ButtonLink>
+    <Panel level="800" class="register-panel">
+        <form action="#" method="post" v-on:submit.prevent="registerAsync">
+            <h2>Register</h2>
+            <Panel v-if="hasLastRegistrationFailed" color="danger" class="error-panel">
+                <p>Incorrect data input! Please try again</p>
+            </Panel>
+            <label for="name">Username:</label>
+            <input v-model="username" type="text" id="name" placeholder="Insert your name here" required>
+            <label for="email">Email:</label>
+            <input v-model="email" type="email" id="email" placeholder="Insert your mail here" required>
+            <label for="password">Password:</label>
+            <input v-model="password" type="password" id="password" placeholder="Insert your password here" required>
+            <Button 
+                v-bind:disabled="isLoading"
+                v-bind:full-width="true"
+                color="primary"
+                class="register-button"
+                type="submit"
+            >
+                Register
+            </Button>
+            <ButtonLink 
+                v-bind:disabled="isLoading"
+                v-bind:flat="true"
+                to="/login"
+            >
+                Already registered? Click here!
+            </ButtonLink>
+        </form>
     </Panel>  
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { whileLoadingAsync } from "~/lib/dataStore";
 
-    .loginPage {
-        margin-left: 200px;
-        margin-right: 200px;
+const authentication = useAuthentication();
+const username = ref("");
+const email = ref("");
+const password = ref("");
+const isLoading = ref(false);
+const hasLastRegistrationFailed = ref(false);
+
+const registerAsync = async () => {
+    await whileLoadingAsync(isLoading, authentication.registerAsync(username.value, email.value, password.value));
+    hasLastRegistrationFailed.value = !!!authentication.userStore.userData;
+    if (!hasLastRegistrationFailed.value) {
+        navigateTo("/");
     }
-    .loginData {
-        margin: 20px;
-    }
-    .sendData {
-        margin: auto;
-        margin-bottom: 20px;
-    }
+ };
+</script>
+
+<style scoped>
     label {
-        align-self: center;
         display: block;
+        margin-bottom: 0.5rem;
     }
-    input{
-        margin-left: 41%;
-        size: 30px;
-        margin-bottom: 20px;
-        padding: 12px 20px;
-        display: inline-block;
-        border: 1px solid #ccc;
+
+    input {
+        padding: 1rem;
+        width: 100%;
+        font-family: inherit;
+        border: 1px solid var(--color-grey-100);
+        color: var(--color-foreground);
+        background-color: var(--color-background);
         border-radius: 4px;
         box-sizing: border-box;
     }
-    .changePage, label, h2 {
-        text-align: center;
-        text-shadow: 2cm;
-        margin-bottom: 20px;
+
+    .register-panel {
+        margin-inline: auto;
+        width: min(95vw, 32rem);
     }
-    .changePage {
-        color: white;
-        background-color: grey;
-        margin-left:30%;
-        margin-right: 30%;
+
+    .register-button, label, h2, p {
+        text-align: center;
+    }
+
+    .register-button, .error-panel, h2, input {
+        margin-bottom: 1rem;
     }
 </style>

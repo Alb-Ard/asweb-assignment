@@ -19,7 +19,7 @@ pageRef.value*/
 
 const authentication = useAuthentication();
 
-onMounted(() => authentication.renew());
+onMounted(() => authentication.renewAsync());
 </script>
 
 <style scoped>
