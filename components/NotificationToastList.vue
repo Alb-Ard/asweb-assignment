@@ -114,4 +114,11 @@ li:where(:not(:last-child)) > .notification-toast {
         scale: 0 1 1;
     }
 }
+
+@media screen and(width <= 1024px) {
+    /* Hide toasts on mobile */
+    aside {
+        display: none;
+    }
+}
 </style>

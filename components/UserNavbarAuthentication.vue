@@ -4,6 +4,7 @@
         <Button v-bind:full-width="true" v-on:click="showDropdown = !showDropdown">Profile</Button>
         <dialog v-if="showDropdown" v-bind:open="showDropdown">
             <p>{{ authentication.userStore.userData.username }}</p>
+            <ButtonLink v-bind:flat="true" to="/management" v-on:click="showDropdown = false">Manager</ButtonLink>
             <ButtonLink v-bind:flat="true" to="/user-settings" v-on:click="showDropdown = false">Settings</ButtonLink>
             <Button v-bind:flat="true" v-on:click="logout">Logout</Button>
         </dialog>

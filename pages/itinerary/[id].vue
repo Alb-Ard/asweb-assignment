@@ -6,14 +6,17 @@
         <p v-else-if="!!!itinerary">Loading...</p>
         <template v-else>
             <header>
-                <ButtonLink to="/itineraries">
+                <ButtonLink to="/itineraries" class="hidden-on-mobile">
                     <template v-slot:icon-left>
                         {{ "<" }}
                     </template>
                     Back
                 </ButtonLink>
                 <h2 v-if="!isRenaming">{{ itinerary?.name }}</h2>
-                <input v-else type="text" v-model="newName" placeholder="Input a name..." />
+                <div v-else>
+                    <InputLabel text="New name" for="newName" />
+                    <InputField class="new-name-field" type="text" v-model="newName" id="newName" placeholder="Input a name..." />
+                </div>
                 <Button 
                     v-bind:disabled="isLoading"
                     v-on:click="isRenaming = !isRenaming"
@@ -56,6 +59,13 @@
                         +
                     </Button>
                 </section>
+                <section class="itinerary-map">
+                    <UserPlacesMap 
+                        v-bind:places="itinerary.places" 
+                        v-bind:focusable-places="false"
+                        v-bind:show-places-names="true"
+                    />
+                </section>
                 <Button 
                     v-bind:full-width="true"
                     v-bind:color="isListExpanded ? 'grey' : 'primary'"
@@ -65,13 +75,6 @@
                 >
                     {{ isListExpanded ? "\\/" : "/\\" }}
                 </Button>
-                <section class="itinerary-map">
-                    <UserPlacesMap 
-                        v-bind:places="itinerary.places" 
-                        v-bind:focusable-places="false"
-                        v-bind:show-places-names="true"
-                    />
-                </section>
             </div>
             <UserAddItineraryPlaceDialog 
                 v-bind:open="isPlacePickerVisible"
@@ -81,6 +84,7 @@
             <Fab
                 v-bind:disabled="isLoading"
                 color="primary"
+                class="hidden-on-mobile"
                 v-on:click="isPlacePickerVisible = true"
             >
                 +
@@ -119,7 +123,10 @@ const dragDrop = useDragDrop("itineraryPlace", handlePlacesReorderedAsync);
 watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, itinerariesStore.fetchOneAsync(itineraryId.value), null); }, { immediate: true });
 watchEffect(() => newName.value = itinerary.value?.name ?? "");
 watch(isRenaming, (isNowRenaming, wasRenaming) => {
-    if (wasRenaming && !isNowRenaming) {
+    if (!!!itinerary.value) {
+        return;
+    }
+    if (wasRenaming && !isNowRenaming && newName.value !== itinerary.value.name) {
         whileLoadingAsync(isLoading, itinerariesStore.updateAsync({ _id: itineraryId.value, name: newName.value }), false);
     }
 });
@@ -180,6 +187,38 @@ li:where(:not(:last-child)) {
 }
 
 @media screen and (width <= 1024px) {
+    main {
+        --header-height: 5.5rem;
+    }
+
+    main > header {
+        grid-template-columns: 1fr 1fr;
+        font-size: 0.75rem;
+    }
+
+    main > header > h2,
+    main > header > div {
+        grid-column: 1 / -1;
+        margin-bottom: 0.5rem;
+    }
+    
+    main > header > div {
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+
+    main > header > div > * {
+        margin-block: auto;
+    }
+
+    .new-name-field {
+        padding: 0.25rem;
+    }
+
+    .hidden-on-mobile {
+        display: none;
+    }
+
     .toggle-list-button {
         display: unset;
     }
@@ -190,15 +229,15 @@ li:where(:not(:last-child)) {
     }
 
     .itinerary-list-visible {
-        grid-template-rows: 0 3rem 1fr;
+        grid-template-rows: 0 1fr 3rem;
     }
 
     .itinerary-map-visible {
-        grid-template-rows: 1fr 3rem 0;
+        grid-template-rows: 1fr 0 3rem;
     }
 
     .itinerary-list {
-        grid-row: 3 / 4;
+        grid-row: 2 / 3;
     }
 
     .itinerary-map {

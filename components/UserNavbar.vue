@@ -4,9 +4,6 @@
             <li>
                 <NuxtLink to="/" class="nav-link" v-bind:class="{ current: isPage('') }">Explore</NuxtLink>
             </li>
-          <li>
-            <NuxtLink to="/management" class="nav-link" v-bind:class="{ current: isPage('management') }">DashBoard</NuxtLink>
-          </li>
             <li>
                 <NuxtLink to="/itineraries" class="nav-link" v-bind:class="{ current: isPage('itineraries') }">Itineraries</NuxtLink>
             </li>
@@ -37,7 +34,7 @@ li {
     column-gap: 1rem;
 }
 
-li:nth-child(4) {
+li:nth-child(3) {
     margin-left: auto;
     display: flex;
 }
