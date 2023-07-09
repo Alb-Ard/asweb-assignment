@@ -1,57 +1,37 @@
 <script setup lang="ts">
-
-
-import {ref} from 'vue'
-
 import Chart from "~/components/Chart.vue";
-
 import ChartFactory from "~/lib/chartFactory";
 import ChartBaseData from "~/lib/types/chart";
-import {ChartType} from "chart.js";
+import { ChartType } from "chart.js";
 
-
-const props =defineProps<{
+defineProps<{
     data: number[],
 }>();
 
-
-const dataLabels = ref(['0','1','2','3','4','5'].map(x => x + " star"));
-
-
-
-const DoughnutChart: ChartBaseData<ChartType> = ChartFactory.createChart("doughnut");
-const RadarChart: ChartBaseData<ChartType> = ChartFactory.createChart("radar");
-
-function computeStatData(data: number[] ,approx = true) {
-    data = data.map(x => approx ? Math.round(x) : x)
-    const arr: number[] = [3, 4, 1, 0, 9, 2];
-
-    for (let i = 0; i < data.length; i++) {
-        arr[data[i]] += 1
-    }
-
-    return arr;
-}
-
+const dataLabels = ref(['1','2','3','4','5'].map(x => x + " star"));
+const doughnutChart: ChartBaseData<ChartType> = ChartFactory.createChart("doughnut");
+const radarChart: ChartBaseData<ChartType> = ChartFactory.createChart("radar");
 </script>
 
-
-
 <template>
-  <div class="chartbox">
-    <Chart :data-values="computeStatData(data)" :data-labels="dataLabels" :chart-data="DoughnutChart"></Chart>
-    <Chart :data-values="computeStatData(data)" :data-labels="dataLabels" :chart-data="RadarChart"></Chart>
-  </div>
+    <div class="chart-list-container">
+        <Chart :data-values="data" :data-labels="dataLabels" :chart-data="doughnutChart"></Chart>
+        <Chart :data-values="data" :data-labels="dataLabels" :chart-data="radarChart"></Chart>
+    </div>
 </template>
 
 <style scoped>
-
-.chartbox {
-  display: inline-block;
-  width: 80%;
-  margin-right: 10%;
-  margin-left: 10%;
+.chart-list-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    width: min(90vw, 72rem);
+    margin-inline: auto;
 }
 
-
+@media screen and (width <= 1024px) {    
+    .chart-list-container {
+    grid-template-columns: 1fr;
+    }
+}
 </style>
