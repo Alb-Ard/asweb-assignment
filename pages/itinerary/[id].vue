@@ -12,7 +12,7 @@
                     </template>
                     Back
                 </ButtonLink>
-                <h2 v-if="!isRenaming">{{ itinerary?.name }}</h2>
+                <h2 v-if="!isRenaming">{{ newName }}</h2>
                 <div v-else>
                     <InputLabel text="New name" for="newName" />
                     <InputField class="new-name-field" type="text" v-model="newName" id="newName" placeholder="Input a name..." />

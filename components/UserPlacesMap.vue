@@ -57,7 +57,7 @@ const emit = defineEmits<{
 }>();
 
 const handlePlaceClicked = (placeId: string) => {
-    if ((props.focusablePlaces === undefined) || props.focusablePlaces) {
+    if (!!!props.focusablePlaces || props.focusablePlaces) {
         emit("placeFocused", placeId);
     }
 }

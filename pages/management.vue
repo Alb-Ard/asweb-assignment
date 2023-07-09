@@ -69,13 +69,13 @@ li {
 }
 
 @media screen and (width <= 1024px) {
-    .place-list {
+    :deep(.place-list) {
         grid-template-columns: 1fr 1fr;
     }
 }
 
 @media screen and (width <= 512px) {
-    .place-list {
+    :deep(.place-list) {
         grid-template-columns: 1fr;
     }
 }
