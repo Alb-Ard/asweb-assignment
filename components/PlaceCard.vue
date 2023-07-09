@@ -8,7 +8,7 @@ const props = defineProps<{
     image?: string,
     level?: ColorLevel,
     starRating: number,
-    to: string,
+    to?: string,
 }>();
 
 const emit = defineEmits<{
@@ -33,7 +33,8 @@ function replaceIfMissing(event: Event) {
 <template>
     <Panel v-bind:level="level ?? '800'" class="card">
         <img alt="" :src="image" @error = "replaceIfMissing">
-        <NuxtLink v-bind:to="to" tint="light" class="link" v-on:click="e => emit('click', e)">{{ name }}</NuxtLink>
+        <NuxtLink v-if="!!to" v-bind:to="to" tint="light" class="link" v-on:click.native="e => emit('click', e)">{{ name }}</NuxtLink>
+        <Button v-else v-bind:flat="true" tint="light" class="link" v-on:click.native="e => emit('click', e)">{{ name }}</Button>
         <StarRating v-bind:rating="props.starRating" />
     </Panel>
 </template>

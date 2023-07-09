@@ -15,8 +15,7 @@
                     v-bind:name="place.name"
                     v-bind:image="place.photoSrcs.at(0)"
                     v-bind:star-rating="place.reviews.reduce((p, c) => p + c.star, 0) / place.reviews.length"
-                    to="/"
-                    v-on:click.prevent="handlePlaceClicked(place._id)"
+                    v-on:click="e => { e.preventDefault(); handlePlaceClicked(place._id) }"
                 />
             </li>
         </ol>

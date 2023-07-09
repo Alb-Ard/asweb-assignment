@@ -38,10 +38,12 @@
                             v-bind:draggable="true"
                             v-on:dragstart="e => dragDrop.onStartDragging(place, e)"
                             v-on:dragover="e => dragDrop.canDropOntoItem(e)"
-                            v-on:dragend="e => dragDrop.onDropEvent(place, e)"
+                            v-on:drop="e => dragDrop.onDropEvent(place, e)"
                         >
-                            <Panel>
-                                = {{ place.name }} <Button color="danger" v-on:click="handleRemovePlace(place._id)">X</Button>
+                            <Panel class="itinerary-list-element">
+                                <span>=</span>
+                                <p>{{ place.name }}</p>
+                                <Button color="danger" v-on:click="handleRemovePlace(place._id)">X</Button>
                             </Panel>
                         </li>
                     </ol>
@@ -161,6 +163,16 @@ li:where(:not(:last-child)) {
 .itinerary-container {
     display: grid;
     grid-template-columns: 16rem 1fr;
+}
+
+.itinerary-list-element {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 0.5rem;
+}
+
+.itinerary-list-element > * {
+    margin-block: auto;
 }
 
 .toggle-list-button {
