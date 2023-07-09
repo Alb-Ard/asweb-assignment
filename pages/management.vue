@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { PlaceReview } from "~/lib/types/place";
 import { initializeIfEmptyAsync, whileLoadingAsync } from "~/lib/dataStore";
+import Createplace from "~/components/createplace.vue";
+
 
 const authentication = useAuthentication();
 const placeStore = usePlacesStore();
@@ -34,8 +36,11 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
             v-on:place-focused="id => navigateTo('/dashboard/' + id)" 
         />
     </template>
-</template>
+    <!-- commentato perchè altrimenti mi sparo-->
+    <!--<createplace></createplace>-->
+    <deleteplace></deleteplace>
 
+</template>
 <style scoped>
 h2 {
   text-align: center;

@@ -43,7 +43,7 @@ export const usePlacesStore = defineStore("places", () => {
             return false;
         }
         await fetchOneAsync(response.data);
-        return true;
+        return response.data;
     }
 
     const updateAsync = async (place: Partial<Place> & { _id: string }) => {
