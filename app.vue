@@ -28,7 +28,8 @@ watch(authentication.userStore, (newUser, previousUser) => {
         notificationUnsubscribe.value = notificationsStore.startAsyncReceiver();
     }
 }, { immediate: true });
-authentication.renewAsync();
+
+onMounted(() => authentication.renewAsync());
 </script>
 
 <style scoped>

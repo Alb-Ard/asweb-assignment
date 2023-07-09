@@ -26,7 +26,7 @@ onMounted(() => whileLoadingAsync(isLoading, placesStore.fetchOneAsync(placeId),
                 <h2>{{ place.name }}</h2>
                 <p>Statistics:</p>
             </header>
-            <p v-if="place.reviews.length <= 0">This place doesn't have any reviews yet</p>
+            <p v-if="place.reviews.length <= 0" class="statistic-paragraph">This place doesn't have any reviews yet</p>
             <template v-else>
                 <ChartBoard :data="convertDataToChartValues(place.reviews.map(r => r.star))"></ChartBoard>
                 <p class="statistic-paragraph">Average rating: {{ averagePlaceRating.toFixed(2) }} <StarRating :rating="averagePlaceRating" /></p>
