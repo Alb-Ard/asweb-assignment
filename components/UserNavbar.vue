@@ -7,6 +7,9 @@
             <li>
                 <NuxtLink to="/itineraries" class="nav-link" v-bind:class="{ current: isPage('itineraries') }">Itineraries</NuxtLink>
             </li>
+            <li v-if="!!authentication.userStore.userData">
+                <UserNavbarNotification />
+            </li>
             <li v-if="showLogin">
                 <UserNavbarAuthentication />
             </li>
@@ -17,6 +20,7 @@
 <script setup lang="ts">
 const route = useRoute();
 const showLogin = computed(() => !isPage("login") && !isPage("register"));
+const authentication = useAuthentication();
 
 const isPage = (pageName: string) => route.path === "/" + pageName;
 </script>
@@ -26,6 +30,7 @@ ul {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    gap: 1rem;
 }
 
 li {
@@ -36,7 +41,6 @@ li {
 
 li:nth-child(3) {
     margin-left: auto;
-    display: flex;
 }
 
 .nav-link {

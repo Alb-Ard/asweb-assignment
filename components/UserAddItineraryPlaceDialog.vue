@@ -6,7 +6,9 @@
     >
         <header>
             <p>Select places to add...</p>
-            <Button color="danger" v-on:click="emit('closed')">X</Button>
+            <Button color="danger" v-on:click="emit('closed')">
+                <span class="fa fa-times"></span>
+            </Button>
         </header>
         <p v-if="!!!placesStore.places">Loading...</p>
         <div v-else>
@@ -70,7 +72,7 @@ dialog {
 
 dialog > header {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 2rem;
     padding: 0.5rem;
 }
 

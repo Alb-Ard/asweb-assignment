@@ -8,7 +8,7 @@
             <header>
                 <ButtonLink to="/itineraries" class="hidden-on-mobile">
                     <template v-slot:icon-left>
-                        {{ "<" }}
+                        <span class="fa fa-arrow-left"></span>
                     </template>
                     Back
                 </ButtonLink>
@@ -46,7 +46,9 @@
                             <Panel class="itinerary-list-element">
                                 <span>=</span>
                                 <p>{{ place.name }}</p>
-                                <Button color="danger" v-on:click="handleRemovePlace(place._id)">X</Button>
+                                <Button color="danger" v-on:click="handleRemovePlace(place._id)">
+                                    <span class="fa fa-trash"></span>
+                                </Button>
                             </Panel>
                         </li>
                     </ol>
@@ -73,7 +75,7 @@
                     class="toggle-list-button"
                     v-on:click="isListExpanded = !isListExpanded"
                 >
-                    {{ isListExpanded ? "\\/" : "/\\" }}
+                    <span v-bind:class="{ 'fa': true, 'fa-list': !isListExpanded, 'fa-map': isListExpanded }"></span>
                 </Button>
             </div>
             <UserAddItineraryPlaceDialog 

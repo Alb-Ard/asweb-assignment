@@ -3,7 +3,7 @@
         <header class="place-main-header">
             <Button v-on:click="handleBackPressed">
                 <template v-slot:icon-left>
-                    {{ "<" }}
+                    <span class="fa fa-arrow-left"></span>
                 </template>
                 Back
             </Button>

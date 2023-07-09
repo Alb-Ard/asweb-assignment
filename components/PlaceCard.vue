@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ColorLevel } from 'lib/types/commonComponentPropTypes';
 
-
-
 const props = defineProps<{
     name: string,
     image?: string,
@@ -15,19 +13,9 @@ const emit = defineEmits<{
     (event: "click", e: MouseEvent): void,
 }>();
 
-//const starRating = ref(3.5);
-
-//const image = ref("https://www.corriereromagna.it/wp-content/uploads/2021/06/cesena-turismo.jpg");
-
-function renderStarRating(fullStar: number, halfStar: number): string {
-    return (props.starRating >= fullStar) ? 'fa fa-star' : ((props.starRating >= halfStar) ? 'fa fa-star-half-full' : 'fa fa-star-o')
-}
-
 function replaceIfMissing(event: Event) {
     (event.target as HTMLImageElement).src = "https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg";
 }
-
-
 </script>
 
 <template>
@@ -54,7 +42,7 @@ img, .link {
 .link {
     display: block;
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .link, .link:hover, .link:visited {

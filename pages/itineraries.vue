@@ -15,7 +15,7 @@
                     <ButtonLink v-bind:to="`/itinerary/${itinerary._id}`">
                         {{ itinerary.name }}
                         <template v-slot:icon-right>
-                            {{ ">" }}
+                            <span class="fa fa-arrow-right"></span>
                         </template>
                     </ButtonLink>
                 </li>

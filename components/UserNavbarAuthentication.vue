@@ -1,7 +1,11 @@
 <template>
-    <ButtonLink v-if="!!!authentication.userStore.userData" to="/login">Log in</ButtonLink>
+    <ButtonLink v-if="!!!authentication.userStore.userData" v-bind:flat="true" to="/login">
+        <span class="fa fa-sign-in"></span>
+    </ButtonLink>
     <div v-else>
-        <Button v-bind:full-width="true" v-on:click="showDropdown = !showDropdown">Profile</Button>
+        <Button v-bind:flat="true" v-on:click="showDropdown = !showDropdown">
+            <span class="fa fa-user"></span>
+        </Button>
         <dialog v-if="showDropdown" v-bind:open="showDropdown">
             <p>{{ authentication.userStore.userData.username }}</p>
             <ButtonLink v-bind:flat="true" to="/management" v-on:click="showDropdown = false">Manager</ButtonLink>
@@ -26,7 +30,6 @@ const logout = async () => await authentication.logoutAsync();
 div {
     z-index: 10;
     position: relative;
-    width: 5rem;
 }
 
 dialog {
@@ -38,5 +41,10 @@ dialog {
     display: grid;
     grid-template-columns: 1fr;
     row-gap: 0.5rem;
+    translate: -50% 0 0;
+}
+
+.fa {
+    font-size: 2rem;
 }
 </style>
