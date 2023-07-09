@@ -10,13 +10,28 @@ import ChartBaseData from "~/lib/types/chart";
 import {ChartType} from "chart.js";
 
 
-const data = ref([3, 4, 1, 6, 8]);
-const dataLabels = ref(['5', '4', '3', '2', '1'].map(x => x + " star"));
+const props =defineProps<{
+    data: number[],
+}>();
+
+
+const dataLabels = ref(['0','1','2','3','4','5'].map(x => x + " star"));
+
 
 
 const DoughnutChart: ChartBaseData<ChartType> = ChartFactory.createChart("doughnut");
 const RadarChart: ChartBaseData<ChartType> = ChartFactory.createChart("radar");
 
+function computeStatData(data: number[] ,approx = true) {
+    data = data.map(x => approx ? Math.round(x) : x)
+    const arr: number[] = [0, 0, 0, 0, 0, 0];
+
+    for (let i = 0; i < data.length; i++) {
+        arr[data[i]] += 1
+    }
+
+    return arr;
+}
 
 </script>
 
@@ -24,8 +39,8 @@ const RadarChart: ChartBaseData<ChartType> = ChartFactory.createChart("radar");
 
 <template>
   <div class="chartbox">
-    <Chart :data-values="data" :data-labels="dataLabels" :chart-data="DoughnutChart"></Chart>
-    <Chart :data-values="data" :data-labels="dataLabels" :chart-data="RadarChart"></Chart>
+    <Chart :data-values="computeStatData(data)" :data-labels="dataLabels" :chart-data="DoughnutChart"></Chart>
+    <Chart :data-values="computeStatData(data)" :data-labels="dataLabels" :chart-data="RadarChart"></Chart>
   </div>
 </template>
 

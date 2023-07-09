@@ -6,6 +6,8 @@ import {usePlacesStore} from "~/composables/usePlacesStore";
 import {initializeIfEmptyAsync, whileLoadingAsync} from "~/lib/dataStore";
 import {MapPlace} from "~/components/UserPlacesMap.vue";
 
+
+
 const data = [
     {
         image: "https://www.corriereromagna.it/wp-content/uploads/2021/06/cesena-turismo.jpg",
@@ -21,8 +23,6 @@ const authentication = useAuthentication();
 const isLoading = ref(false);
 
 
-
-
 const placeStore = usePlacesStore();
 
 
@@ -31,7 +31,17 @@ const places = computed(() => placeStore.places);
 
 
 
+function placeByMeanReview(reviews: [any]): number {
+    return reviews.map(x => x.star)
+        .reduce((s, v) => s + v) / reviews.length
+}
+
+function concatPathWithPlaceId(id: string): string {
+    return "/dashboard?_id=" + id;
+}
+
 watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => placeStore.places, placeStore), null); }, { immediate: true });
+
 
 
 </script>
@@ -45,7 +55,7 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
     </div>
     <div class="cardList">
         <div class="cardContainer" v-for="place in places">
-            <PlaceCard :image="places[0].photoSrcs[0]" :star-rating="3.5" to="/dashboard"></PlaceCard>
+            <PlaceCard :image="places[0].photoSrcs[0]" :star-rating="placeByMeanReview(place.reviews)" :name="place.name" :to="concatPathWithPlaceId(place._id)"></PlaceCard>
         </div>
     </div>
 </template>
