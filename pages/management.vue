@@ -35,9 +35,7 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
             v-on:place-focused="id => navigateTo('/dashboard/' + id)" 
         />
     </template>
-    <!-- commentato perchè altrimenti mi sparo-->
-    <!--<createplace></createplace>-->
-    <deleteplace></deleteplace>
+    <createplace></createplace>
 
 </template>
 <style scoped>
