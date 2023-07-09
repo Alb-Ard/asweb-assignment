@@ -1,6 +1,10 @@
 <template>
     <div>
-        <LMap v-bind:use-global-leaflet="false" v-bind:zoom="12" v-bind:center="focusedPlace?.location ?? [47.41322, -1.219482]">
+        <LMap 
+            v-bind:use-global-leaflet="false" 
+            v-bind:zoom="14"
+            v-bind:center="focusedPlace?.location ?? [44.13873257393356, 12.239157218933107]"
+        >
             <LTileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 layer-type="base"
