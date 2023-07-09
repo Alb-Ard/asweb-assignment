@@ -52,6 +52,7 @@ const unreadCount = computed(() => notifications.value.filter(n => !n.read).leng
 
     .notify {
         position: relative;
+        z-index: 10;
     }
 
     .fa-bell {
