@@ -42,7 +42,7 @@ const isLoading = ref(false);
 const hasRegisterFailed = ref(false);
 
 const registerAsync = async () => {
-    await whileLoadingAsync(isLoading, authentication.registerAsync(username.value, email.value, password.value));
+    await whileLoadingAsync(isLoading, authentication.registerAsync(username.value, email.value, password.value), null);
     hasRegisterFailed.value = !!!authentication.userStore.userData;
     if (!hasRegisterFailed.value) {
         navigateTo("/");
