@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import {usePlacesStore} from "~/composables/usePlacesStore";
-import {initializeIfEmptyAsync, whileLoadingAsync} from "~/lib/dataStore";
+import { PlaceReview } from "~/lib/types/place";
+import { initializeIfEmptyAsync, whileLoadingAsync } from "~/lib/dataStore";
 
 const authentication = useAuthentication();
-const isLoading = ref(false);
 const placeStore = usePlacesStore();
 const places = computed(() => placeStore.places?.filter(p => p.owner._id === authentication.userStore.userData?._id));
+const isLoading = ref(false);
+
+function placeByMeanReview(reviews: PlaceReview[]): number {
+    return reviews.reduce((s, v) => s + v.star, 0) / reviews.length;
+}
+
+function concatPathWithPlaceId(id: string): string {
+    return "/dashboard/" + id;
+}
 
 watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => placeStore.places, placeStore), null); }, { immediate: true });
 </script>
 
 <template>
-    <p v-if="authentication.userStore.userData === undefined">Loading...</p>
+    <p v-if="!!!places || authentication.userStore.userData === undefined">Loading...</p>
     <p v-else-if="authentication.userStore.userData === null">Please log in to enter manager mode!</p>
     <template v-else>
         <header>
             <h2>Welcome back, {{ authentication.userStore.userData?.username }}</h2>
         </header>
         <h3>Your places:</h3>
-        <div class="card-list">
-            <div class="card-list-element" v-for="place in places">
-                <PlaceCard 
-                    :image="place.photoSrcs.at(0) ?? ''" 
-                    :name="place.name"
-                    :star-rating="place.reviews.reduce((p, c) => p + c.star, 0) / place.reviews.length" 
-                    to="/dashboard"
-                >
-                </PlaceCard>
-            </div>
-        </div>
+        <UserPlacesSection 
+            v-bind:places="places"
+            class="place-list-section"
+            list-class="place-list"
+            v-on:request-places="placeStore.fetchNextAsync()" 
+            v-on:place-focused="id => navigateTo('/dashboard/' + id)" 
+        />
     </template>
 </template>
 
@@ -50,22 +54,29 @@ header {
   margin-bottom: 2rem;
 }
 
-.card-list {
+li {
+    list-style-type: none;
+}
+
+.place-list-section {
   width: min(90vw, 72rem);
   margin-inline: auto;
+}
+
+:deep(.place-list) {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
 
 @media screen and (width <= 1024px) {
-    .card-list {
+    .place-list {
         grid-template-columns: 1fr 1fr;
     }
 }
 
 @media screen and (width <= 512px) {
-    .card-list {
+    .place-list {
         grid-template-columns: 1fr;
     }
 }

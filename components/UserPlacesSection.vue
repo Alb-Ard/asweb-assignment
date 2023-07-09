@@ -5,7 +5,7 @@
         </header>
         <label for="searchPlaceName">Search by name:</label>
         <input type="text" id="searchPlaceName" placeholder="Search..." v-on:input="handleInputModified" />
-        <ol>
+        <ol v-if="filteredPlaces.length > 0" v-bind:class="listClass">
             <li 
                 v-for="place in filteredPlaces"
                 v-bind:key="place._id"
@@ -19,6 +19,7 @@
                 />
             </li>
         </ol>
+        <p v-else>No places found!</p>
     </section>
 </template>
 
@@ -28,6 +29,7 @@ import { vIntersectionObserver } from "@vueuse/components";
 
 const props = defineProps<{
     places: Place[],
+    listClass?: string,
 }>();
 
 const searchTimeout = ref();

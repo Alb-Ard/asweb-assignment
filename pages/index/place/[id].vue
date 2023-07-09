@@ -13,7 +13,8 @@ import { whileLoadingAsync } from "~/lib/dataStore";
 
 const route = useRoute();
 const placesStore = usePlacesStore();
-const focusedPlace = computed(() => placesStore.places?.find(p => p._id === (route.params.id as string)));
+const placeId = route.params.id as string;
+const focusedPlace = computed(() => placesStore.places?.find(p => p._id === placeId));
 const isLoading = ref(false);
 
 const handlePlaceRated = (star: number) => whileLoadingAsync(isLoading, placesStore.updateReviewAsync(focusedPlace.value!._id, star), false);
@@ -21,4 +22,5 @@ const handlePlaceRated = (star: number) => whileLoadingAsync(isLoading, placesSt
 definePageMeta({
     key: route => route.fullPath
 });
+onMounted(() => whileLoadingAsync(isLoading, placesStore.fetchOneAsync(placeId), null));
 </script>
