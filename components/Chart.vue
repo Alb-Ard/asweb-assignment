@@ -15,15 +15,13 @@ const props =defineProps<{
 }>();
 
 
-const dataLabels = ['5', '4', '3', '2', '1'].map(x => x + " star");
-
 const ChartJs = computed(() => defineChartComponent(props.chartData.chartName, props.chartData.chartType))
 
 
 const type = props.chartData.chartType;
 
 
-const testData: Ref<ChartData<typeof type>> = ref({
+const displayData: Ref<ChartData<typeof type>> = ref({
     labels: props.dataLabels,
     datasets: [
     {
@@ -48,7 +46,7 @@ const options: Ref<ChartOptions<typeof type>> = ref(props.chartData.options);
 
 <template>
     <div class="chart">
-        <ChartJs :chartData = "testData" :options="options"></ChartJs>
+        <ChartJs :chartData = "displayData" :options="options"></ChartJs>
     </div>
 </template>
 

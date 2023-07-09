@@ -1,20 +1,31 @@
 <script setup lang="ts">
 
-    const toggleDropDown = ref(false);
-    const testNot = ref(["notifica1","notifica2", "notifica3"])
+    import {initializeIfEmptyAsync, whileLoadingAsync} from "~/lib/dataStore";
 
-    //TO DO on mounted
+    const toggleDropDown = ref(false);
+
+    const authentication = useAuthentication();
+    const isLoading = ref(false);
+
+
+    const notificationsStore = useNotificationsStore();
+
+    const notifications = computed(() => notificationsStore.notifications);
+
+    watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => notificationsStore.notifications, notificationsStore), null); }, { immediate: true });
+
+
 
 </script>
 
 <template>
     <div class="notify">
         <button class="fa fa-bell" @click="toggleDropDown = !toggleDropDown">
-            <span class="num">{{testNot.length}}</span>
+            <span class="num">{{notifications.length}}</span>
         </button>
         <dialog v-if="toggleDropDown" :open="toggleDropDown">
             <!-- add dynamically place id based on notification-->
-            <ButtonLink to="/place/64a702d8eca121ace97da058" v-for="item in testNot">{{item}}</ButtonLink>
+            <ButtonLink to="/place/64a702d8eca121ace97da058" v-for="item in notifications">{{item.text}}</ButtonLink>
         </dialog>
     </div>
 </template>

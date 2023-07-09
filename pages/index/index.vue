@@ -5,6 +5,7 @@
         v-on:request-places="handleRequestPlaces" 
         v-on:place-focused="placeId => navigateTo('/place/' + placeId)"
     />
+
 </template>
 
 <script setup lang="ts">
