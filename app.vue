@@ -1,7 +1,7 @@
 <template>
     <div class="global-container">
         <header>
-            <h1>Explorer</h1>
+            <h1>Ce.xplorer</h1>
             <UserNavbar />
         </header>
         <div class="page-container">
@@ -19,7 +19,6 @@ const authentication = useAuthentication();
 const notificationsStore = useNotificationsStore();
 const notificationUnsubscribe = ref<() => void>();
 
-onMounted(() => authentication.renewAsync());
 watch(authentication.userStore, (newUser, previousUser) => {
     if (!!!newUser) {
         !!notificationUnsubscribe.value && notificationUnsubscribe.value();
@@ -28,7 +27,9 @@ watch(authentication.userStore, (newUser, previousUser) => {
         notificationsStore.fetchNextAsync();
         notificationUnsubscribe.value = notificationsStore.startAsyncReceiver();
     }
-})
+}, { immediate: true });
+
+onMounted(() => authentication.renewAsync());
 </script>
 
 <style scoped>

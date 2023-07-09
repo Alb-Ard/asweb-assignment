@@ -7,9 +7,9 @@
         <input type="text" id="searchPlaceName" placeholder="Search..." v-on:input="handleInputModified" />
         <ol v-if="filteredPlaces.length > 0" v-bind:class="listClass">
             <li 
-                v-for="place in filteredPlaces"
+                v-for="(place, placeIndex) in filteredPlaces"
                 v-bind:key="place._id"
-                v-intersection-observer="handleObservedPlacesChanged"
+                v-intersection-observer="(e, o) => placeIndex === filteredPlaces.length - 1 && handleObservedPlacesChanged(e, o)"
             >
                 <PlaceCard 
                     v-bind:name="place.name"
@@ -32,7 +32,7 @@ const props = defineProps<{
     listClass?: string,
 }>();
 
-const searchTimeout = ref();
+const searchTimeout = ref<NodeJS.Timeout>();
 const nameFilter = ref<string>("");
 const filteredPlaces = computed(() => props.places?.filter(p => p.name.toLowerCase().includes(nameFilter.value.toLowerCase())));
 const intersectedPlacesCount = ref(0);

@@ -27,7 +27,6 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
         <header>
             <h2>Welcome back, {{ authentication.userStore.userData?.username }}</h2>
         </header>
-        <h3>Your places:</h3>
         <UserPlacesSection 
             v-bind:places="places"
             class="place-list-section"
@@ -75,13 +74,13 @@ li {
 }
 
 @media screen and (width <= 1024px) {
-    .place-list {
+    :deep(.place-list) {
         grid-template-columns: 1fr 1fr;
     }
 }
 
 @media screen and (width <= 512px) {
-    .place-list {
+    :deep(.place-list) {
         grid-template-columns: 1fr;
     }
 }

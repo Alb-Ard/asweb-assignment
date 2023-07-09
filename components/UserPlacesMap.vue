@@ -17,7 +17,7 @@
                 v-bind:draggable="false"
                 v-bind:visible="focusedId === undefined || focusedId === place._id"
                 v-bind:interactive="focusablePlaces ?? true"
-                v-on:click="handlePlaceClicked(place._id)"
+                v-on:click="e => handlePlaceClicked(place._id)"
             >
                 <LTooltip v-bind:options="tooltipOptions">
                     {{ place.name }}
@@ -56,7 +56,11 @@ const emit = defineEmits<{
     (event: "placeFocused", placeId: string): void
 }>();
 
-const handlePlaceClicked = (placeId: string) => (props.focusablePlaces ?? true) && emit("placeFocused", placeId);
+const handlePlaceClicked = (placeId: string) => {
+    if (!!!props.focusablePlaces || props.focusablePlaces) {
+        emit("placeFocused", placeId);
+    }
+}
 
 </script>
 

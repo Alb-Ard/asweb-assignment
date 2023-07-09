@@ -8,7 +8,7 @@
                 >
                     <div class="notification-toast-content">
                         <p>{{ notification.text }}</p>
-                        <Button v-bind:flat="true" v-bind:full-width="true" color="primary" v-on:click="markNotificationAsRead(notification._id)">Close</Button>
+                        <Button v-bind:flat="true" v-bind:full-width="true" color="primary" v-on:click="hideNotification(notification._id)">Close</Button>
                         <div class="notification-toast-progress" v-bind:style="`--duration: ${notificationShowDurationMillis}ms`"></div>
                     </div>
                 </Panel>
@@ -33,7 +33,7 @@ const emit = defineEmits<{
     (event: "markAsRead", id: string): void
 }>();
 
-const markNotificationAsRead = (id: string) => {
+const hideNotification = (id: string) => {
     emit("markAsRead", id);
     if (hiddenNotificationIds.value.includes(id)) {
         return;
@@ -45,7 +45,7 @@ const markNotificationAsRead = (id: string) => {
 watch(unreadNotifications, () => {
     unreadNotifications.value.forEach(notification => {
         if (!hiddenNotificationIds.value.includes(notification._id)) {
-            notificationTimeouts.value.set(notification._id, setTimeout(markNotificationAsRead, notificationShowDurationMillis, notification._id));
+            notificationTimeouts.value.set(notification._id, setTimeout(hideNotification, notificationShowDurationMillis, notification._id));
         }
     })
 }, { immediate: true });
