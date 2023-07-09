@@ -23,7 +23,8 @@
     "@vueuse/components": "^10.2.1",
     "@vueuse/core": "^10.2.1",
     "axios": "^1.4.0",
-    "pinia": "^2.1.4"
+    "pinia": "^2.1.4",
+    "socket.io-client": "^4.7.1"
   },
   "overrides": {
     "vue": "latest"

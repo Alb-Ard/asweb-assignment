@@ -26,6 +26,6 @@ export default defineNuxtConfig({
     },
     modules: [
         '@pinia/nuxt',
-        '@vueuse/nuxt',
-    ],
+        '@vueuse/nuxt'
+    ]
 })

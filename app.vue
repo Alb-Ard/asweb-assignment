@@ -7,16 +7,28 @@
         <div class="page-container">
             <NuxtPage/>
         </div>
+        <NotificationToastList 
+            v-bind:notifications="notificationsStore.notifications"
+            v-on:mark-as-read="notificationsStore.markAsReadAsync"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import useAuthentication from "~/composables/useAuthentication";
-import DashBoard from "~/pages/DashBoard.vue";
-
 const authentication = useAuthentication();
+const notificationsStore = useNotificationsStore();
+const notificationUnsubscribe = ref<() => void>();
 
 onMounted(() => authentication.renewAsync());
+watch(authentication.userStore, (newUser, previousUser) => {
+    if (!!!newUser) {
+        !!notificationUnsubscribe.value && notificationUnsubscribe.value();
+        notificationUnsubscribe.value = undefined;
+    } else if (!!!previousUser || !!!notificationUnsubscribe.value) {
+        notificationsStore.fetchNextAsync();
+        notificationUnsubscribe.value = notificationsStore.startAsyncReceiver();
+    }
+})
 </script>
 
 <style scoped>

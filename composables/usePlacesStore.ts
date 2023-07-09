@@ -53,8 +53,15 @@ export const usePlacesStore = defineStore("places", () => {
         });
         if (response.status !== 200) {
             return false;
-        } else if (places.value?.some(p => p._id === placeId)) {
-            await fetchOneAsync(placeId);
+        }
+        const existingPlace = places.value?.find(p => p._id === placeId);
+        if (existingPlace) {
+            addPlace({
+                ...existingPlace,
+                ...place
+            });
+        } else {
+            await fetchOneAsync(place._id);
         }
         return true;
     }
