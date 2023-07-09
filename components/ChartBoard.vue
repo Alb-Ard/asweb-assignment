@@ -24,7 +24,7 @@ const RadarChart: ChartBaseData<ChartType> = ChartFactory.createChart("radar");
 
 function computeStatData(data: number[] ,approx = true) {
     data = data.map(x => approx ? Math.round(x) : x)
-    const arr: number[] = [0, 0, 0, 0, 0, 0];
+    const arr: number[] = [3, 4, 1, 0, 9, 2];
 
     for (let i = 0; i < data.length; i++) {
         arr[data[i]] += 1
