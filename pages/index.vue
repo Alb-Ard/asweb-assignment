@@ -10,7 +10,7 @@
             <UserPlacesMap 
                 v-bind:places="places" 
                 v-bind:focused-id="focusedPlaceId"
-                v-on:place-focused="handlePlaceFocused"
+                v-on:place-focused="placeId => navigateTo('/place/' + placeId)"
             />
         </section>
     </main>
@@ -24,8 +24,6 @@ const placesStore = usePlacesStore();
 const places = computed(() => placesStore.places);
 const focusedPlaceId = computed(() => route.params.id as string);
 const focusedPlace = computed(() => focusedPlaceId.value !== undefined && !!places.value ? places.value.find(p => p._id === focusedPlaceId.value) : undefined);
-
-const handlePlaceFocused = (placeId: string | undefined) => navigateTo("/place/" + placeId);
 
 onMounted(() => initializeIfEmptyAsync(() => placesStore.places, placesStore));
 </script>

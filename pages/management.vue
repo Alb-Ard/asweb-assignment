@@ -25,7 +25,6 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
         <header>
             <h2>Welcome back, {{ authentication.userStore.userData?.username }}</h2>
         </header>
-        <h3>Your places:</h3>
         <UserPlacesSection 
             v-bind:places="places"
             class="place-list-section"

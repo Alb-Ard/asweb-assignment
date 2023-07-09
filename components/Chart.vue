@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineChartComponent } from "vue-chart-3";
-import {Chart, ChartData, ChartOptions, ChartType, registerables} from "chart.js";
+import { Chart, ChartData, ChartOptions, ChartType, registerables } from "chart.js";
 import ChartBaseData from "~/lib/types/chart";
 
 Chart.register(...registerables);
@@ -46,7 +46,7 @@ onMounted(() => {
                     getCssVariableValue("--color-grey-500"),
                     getCssVariableValue("--color-primary-600"),
                 ],
-                borderColor: getCssVariableValue("--color-grey-100"),
+                borderColor: getCssVariableValue("--color-grey-900"),
                 pointBackgroundColor: getCssVariableValue("--color-primary-400"),
                 pointBorderColor: "transparent",
             },

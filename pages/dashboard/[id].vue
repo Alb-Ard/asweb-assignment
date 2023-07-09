@@ -46,6 +46,7 @@ header {
 }
 
 p {
+    margin-top: 2rem;
     font-size: 1.1rem;
 }
 
@@ -54,5 +55,6 @@ p {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: center;
+    align-content: center;
 }
 </style>
