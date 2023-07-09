@@ -1,8 +1,11 @@
-import {ChartTypeRegistry} from "chart.js";
+import {ChartOptions, ChartType} from "chart.js";
 
-interface ChartBaseData {
+
+
+interface ChartBaseData<T extends ChartType> {
     readonly chartName: string,
-    readonly chartType: keyof ChartTypeRegistry
+    readonly chartType: ChartType,
+    readonly options: ChartOptions<T>
 }
 
 export default ChartBaseData;

@@ -7,14 +7,15 @@ import Chart from "~/components/Chart.vue";
 
 import ChartFactory from "~/lib/chartFactory";
 import ChartBaseData from "~/lib/types/chart";
-import ManagementPage from "~/pages/management.vue";
+import {ChartType} from "chart.js";
 
 
 const data = ref([3, 4, 1, 6, 8]);
 const dataLabels = ref(['5', '4', '3', '2', '1'].map(x => x + " star"));
 
-const DoughnutChart: ChartBaseData = ChartFactory.createChart("doughnut");
-const RadarChart: ChartBaseData = ChartFactory.createChart("radar");
+
+const DoughnutChart: ChartBaseData<ChartType> = ChartFactory.createChart("doughnut");
+const RadarChart: ChartBaseData<ChartType> = ChartFactory.createChart("radar");
 
 
 </script>
