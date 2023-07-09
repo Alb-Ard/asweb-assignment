@@ -8,10 +8,7 @@
                 >
                     <div class="notification-toast-content">
                         <p>{{ notification.text }}</p>
-                        <div class="notification-toast-buttons">
-                            <Button v-bind:flat="true" color="primary" v-on:click="markNotificationAsRead(notification._id)">Mark as read</Button>
-                            <Button v-bind:flat="true" v-on:click="hideNotification(notification._id)">Close</Button>
-                        </div>
+                        <Button v-bind:flat="true" v-bind:full-width="true" color="primary" v-on:click="markNotificationAsRead(notification._id)">Close</Button>
                         <div class="notification-toast-progress" v-bind:style="`--duration: ${notificationShowDurationMillis}ms`"></div>
                     </div>
                 </Panel>
@@ -36,7 +33,8 @@ const emit = defineEmits<{
     (event: "markAsRead", id: string): void
 }>();
 
-const hideNotification = (id: string) => {
+const markNotificationAsRead = (id: string) => {
+    emit("markAsRead", id);
     if (hiddenNotificationIds.value.includes(id)) {
         return;
     }
@@ -44,15 +42,10 @@ const hideNotification = (id: string) => {
     clearTimeout(notificationTimeouts.value.get(id));
 }
 
-const markNotificationAsRead = (id: string) => {
-    emit("markAsRead", id);
-    hideNotification(id);
-}
-
 watch(unreadNotifications, () => {
     unreadNotifications.value.forEach(notification => {
         if (!hiddenNotificationIds.value.includes(notification._id)) {
-            notificationTimeouts.value.set(notification._id, setTimeout(hideNotification, notificationShowDurationMillis, notification._id));
+            notificationTimeouts.value.set(notification._id, setTimeout(markNotificationAsRead, notificationShowDurationMillis, notification._id));
         }
     })
 }, { immediate: true });
@@ -100,20 +93,14 @@ li:where(:not(:last-child)) > .notification-toast {
     position: relative;
 }
 
-.notification-toast-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin-bottom: 1rem;
-}
-
 .notification-toast-progress {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: var(--color-primary-400);
-    height: 0.5rem;
-    margin: 0.25rem;
+    height: 0.25rem;
+    margin: 0.15rem;
     border-radius: 2rem;
     animation: progress-elapse var(--duration, 10000ms) linear forwards;
     transform-origin: 0 50%;
