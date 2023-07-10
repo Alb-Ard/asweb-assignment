@@ -15,6 +15,7 @@
             <UserPlacesSection
                 v-bind:places="placesStore.places"
                 v-on:place-focused="handlePlaceSelected"
+                @click="emit('closed')"
             />
             <section class="places-map">
                 <UserPlacesMap 

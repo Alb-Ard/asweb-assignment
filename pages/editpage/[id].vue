@@ -28,7 +28,7 @@ const updatePlace = () => {
         description: description.value != "" ? description.value : undefined,
         location: lat.value !== undefined && lon.value !== undefined ? [lat.value, lon.value] : undefined,
         photoSrcs: image.value != "" ? [image.value] : undefined
-    });
+    }).then(_ => navigateTo('/management/'));
 }
 
 watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => placeStore.places, placeStore), null); }, { immediate: true });
