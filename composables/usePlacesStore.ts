@@ -10,86 +10,110 @@ export const usePlacesStore = defineStore("places", () => {
     const authentication = useAuthentication();
 
     const fetchNextAsync = async () => {
-        const response = await axios.get<Place[]>(getApiUrl("place") + "?page=" + page.value);
-        if (response.status !== 200) {
-            return;
+        try {
+            const response = await axios.get<Place[]>(getApiUrl("place") + "?page=" + page.value);
+            if (response.status !== 200) {
+                return;
+            }
+            if (areFetchedPagesComplete(response.data)) {
+                page.value++;
+            }
+            response.data.forEach(addPlace);
+        } catch (error) {
+            
         }
-        if (areFetchedPagesComplete(response.data)) {
-            page.value++;
-        }
-        response.data.forEach(addPlace);
     };
 
     const fetchOneAsync = async (id: string) => {
-        const response = await axios.get<Place>(getApiUrl("place") + "/" + id);
-        if (response.status !== 200) {
-            return;
+        try {
+            const response = await axios.get<Place>(getApiUrl("place") + "/" + id);
+            if (response.status !== 200) {
+                return;
+            }
+            addPlace(response.data);
+        } catch (error) {
+            
         }
-        addPlace(response.data);
     };
 
     const createAsync = async (name: string, location: [number, number]) => {
-        if (!!!authentication.userStore.userData) {
-            return false;
+        try {
+            if (!!!authentication.userStore.userData) {
+                return false;
+            }
+            const response = await axios.post<string>(getApiUrl("place"), {
+                name: name,
+                owner: authentication.userStore.userData._id,
+                location: location,
+            }, {
+                withCredentials: true
+            });
+            if (response.status !== 200) {
+                return false;
+            }
+            await fetchOneAsync(response.data);
+            return response.data;
+        } catch (error) {
+            return null;
         }
-        const response = await axios.post<string>(getApiUrl("place"), {
-            name: name,
-            owner: authentication.userStore.userData._id,
-            location: location,
-        }, {
-            withCredentials: true
-        });
-        if (response.status !== 200) {
-            return false;
-        }
-        await fetchOneAsync(response.data);
-        return response.data;
     }
 
     const updateAsync = async (place: Partial<Place> & { _id: string }) => {
-        const { _id: placeId, ...placeData } = place;
-        const response = await axios.patch(getApiUrl("place") + "/" + placeId, placeData, {
-            withCredentials: true
-        });
-        if (response.status !== 200) {
+        try {
+            const { _id: placeId, ...placeData } = place;
+            const response = await axios.patch(getApiUrl("place") + "/" + placeId, placeData, {
+                withCredentials: true
+            });
+            if (response.status !== 200) {
+                return false;
+            }
+            const existingPlace = places.value?.find(p => p._id === placeId);
+            if (existingPlace) {
+                addPlace({
+                    ...existingPlace,
+                    ...place
+                });
+            } else {
+                await fetchOneAsync(place._id);
+            }
+            return true;
+        } catch (error) {
             return false;
         }
-        const existingPlace = places.value?.find(p => p._id === placeId);
-        if (existingPlace) {
-            addPlace({
-                ...existingPlace,
-                ...place
-            });
-        } else {
-            await fetchOneAsync(place._id);
-        }
-        return true;
     }
 
     const deleteAsync = async (id: string) => {
-        const response = await axios.delete(getApiUrl("place") + "/" + id, {
-            withCredentials: true
-        });
-        if (response.status !== 200) {
+        try {
+            const response = await axios.delete(getApiUrl("place") + "/" + id, {
+                withCredentials: true
+            });
+            if (response.status !== 200) {
+                return false;
+            } else if (places.value?.some(p => p._id === id)) {
+                places.value = places.value.filter(p => p._id !== id);
+            }
+            return true;
+        } catch (error) {
             return false;
-        } else if (places.value?.some(p => p._id === id)) {
-            places.value = places.value.filter(p => p._id !== id);
         }
-        return true;
     }
 
     const updateReviewAsync = async (placeId: string, star: number) => {
-        if (!!!authentication.userStore.userData) {
-            return false;
-        }
-        const response = star > 0 ? await axios.post<string>(getApiUrl("place") + "/" + placeId + "/review", {
-                star: star
-            }, {
-                withCredentials: true
-            }) : await axios.delete(getApiUrl("place") + "/" + placeId + "/review", {
-                withCredentials: true
-            });
-        if (response.status !== 200) {
+        try {
+            if (!!!authentication.userStore.userData) {
+                return false;
+            }
+            const response = star > 0 ? await axios.post<string>(getApiUrl("place") + "/" + placeId + "/review", {
+                    star: star
+                }, {
+                    withCredentials: true
+                }) : await axios.delete(getApiUrl("place") + "/" + placeId + "/review", {
+                    withCredentials: true
+                });
+            if (response.status !== 200) {
+                return false;
+            }
+        } catch (error) {
             return false;
         }
         await fetchOneAsync(placeId);
@@ -106,6 +130,7 @@ export const usePlacesStore = defineStore("places", () => {
         } else {
             places.value.push(newPlace);
         }
+        places.value = places.value;
     }
 
     return {

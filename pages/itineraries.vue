@@ -1,7 +1,8 @@
 <template>
     <main>
         <h2>Your itineraries</h2>
-        <p v-if="!!!authentication.userStore.userData">
+        <p v-if="authentication.userStore.userData === undefined">Loading...</p>
+        <p v-else-if="!!!authentication.userStore.userData">
             <NuxtLink to="/login">Log in</NuxtLink> or <NuxtLink to="/register">Sign up</NuxtLink> to create itineraries!
         </p>
         <p v-else-if="!!!itineraries">Loading...</p>

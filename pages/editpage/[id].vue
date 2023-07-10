@@ -17,18 +17,21 @@ const lon = ref<number>();
 const isLoading = ref(false);
 
 const handleMapClick = (e: LeafletMouseEvent) => {
+    if (isLoading.value) {
+        return;
+    }
     lat.value = e.latlng.lat;
     lon.value = e.latlng.lng;
 }
 
 const updatePlace = () => {
-    placeStore.updateAsync({
+    whileLoadingAsync(isLoading, placeStore.updateAsync({
         _id: placeId.value,
         name: name.value != "" ? name.value : undefined,
         description: description.value != "" ? description.value : undefined,
         location: lat.value !== undefined && lon.value !== undefined ? [lat.value, lon.value] : undefined,
         photoSrcs: image.value != "" ? [image.value] : undefined
-    }).then(_ => navigateTo('/management/'));
+    }), false).then(_ => { navigateTo("/management/"); });
 }
 
 watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => placeStore.places, placeStore), null); }, { immediate: true });
@@ -47,13 +50,13 @@ watch(place, () => {
         <p v-else-if="authentication.userStore.userData === null || authentication.userStore.userData._id !== place.owner._id">Log in to edit this place</p>
         <form v-else action="#" method="post" @submit.prevent="updatePlace()">
             <InputLabel text="Name" for="name" />
-            <InputField class="new-name-field" type="text" v-model="name" id="name" placeholder="Input a name..." />
+            <InputField v-bind:disabled="isLoading" class="new-name-field" type="text" v-model="name" id="name" placeholder="Input a name..." />
 
             <InputLabel text="Description" for="description" />
-            <InputField class="new-text-field" type="text" v-model="description" id="description" placeholder="Input description..." />
+            <InputField v-bind:disabled="isLoading" class="new-text-field" type="text" v-model="description" id="description" placeholder="Input description..." />
 
             <InputLabel text="Image" for="image" />
-            <InputField  class="new-image-field" type="text" v-model="image" id="image" placeholder="Input image link..." />
+            <InputField v-bind:disabled="isLoading" class="new-image-field" type="text" v-model="image" id="image" placeholder="Input image link..." />
 
             <InputLabel text="Position" for="map"></InputLabel>
             <div class="select-location-map">
@@ -61,6 +64,7 @@ watch(place, () => {
                     v-bind:use-global-leaflet="false"
                     v-bind:zoom="14"
                     v-bind:center="[lat ?? 44.13873257393356, lon ?? 12.239157218933107]"
+                    id="map"
                     v-on:click="handleMapClick"
                 >
                     <LTileLayer
@@ -72,7 +76,7 @@ watch(place, () => {
                 </LMap>
             </div>
 
-            <Fab color="primary" type="submit">
+            <Fab v-bind:disabled="isLoading"  color="primary" type="submit">
                 <p class="hidden">Update data</p>
                 <span class="fa fa-check"></span>
             </Fab>

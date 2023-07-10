@@ -6,12 +6,15 @@ const placeStore = usePlacesStore();
 const places = computed(() => placeStore.places?.filter(p => p.owner._id === authentication.userStore.userData?._id));
 const isLoading = ref(false);
 
-watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => placeStore.places, placeStore), null); }, { immediate: true });
+watch(authentication.userStore, newUserStore => {
+    !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => placeStore.places, placeStore), null);
+}, { immediate: true });
 </script>
 
 <template>
-    <p v-if="!!!places || authentication.userStore.userData === undefined">Loading...</p>
-    <p v-else-if="authentication.userStore.userData === null">Please log in to enter manager mode!</p>
+    <p v-if="authentication.userStore.userData === undefined">Loading...</p>
+    <p v-else-if="!!!authentication.userStore.userData">Please log in to enter manager mode!</p>
+    <p v-else-if="!!!places">Loading...</p>
     <template v-else>
         <header>
             <h2>Welcome back, {{ authentication.userStore.userData?.username }}</h2>
@@ -32,8 +35,8 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
                 <DeletePlaceButton class="place-action-button" :remove-id="slotProps.placeId" />
             </template>
         </UserPlacesSection>
+        <CreatePlaceFab />
     </template>
-    <CreatePlaceFab />
 </template>
 <style scoped>
 h2 {
@@ -55,6 +58,10 @@ header {
 
 li {
     list-style-type: none;
+}
+
+p {
+    text-align: center;
 }
 
 .place-list-section {
