@@ -29,6 +29,7 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
         </header>
         <UserPlacesSection 
             v-bind:places="places"
+            is-editable="true"
             class="place-list-section"
             list-class="place-list"
             v-on:request-places="placeStore.fetchNextAsync()" 
