@@ -63,12 +63,12 @@ dialog {
     --header-height: 3rem;
 
     margin: auto;
-    background-color: var(--color-background);
+    background-color: var(--color-grey-900);
     display: grid;
     grid-template-rows: var(--header-height) calc(90dvh - var(--header-height));
     width: 90vw;
     height: 90dvh;
-    border: 0;
+    border: 2px solid var(--color-grey-700);
 }
 
 dialog > header {
@@ -83,7 +83,7 @@ dialog > div {
 }
 
 dialog::backdrop {
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(8px);
 }
 
 dialog > div > *:first-child {

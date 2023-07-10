@@ -66,6 +66,7 @@
                         v-bind:places="itinerary.places" 
                         v-bind:focusable-places="false"
                         v-bind:show-places-names="true"
+                        v-bind:connect-places="true"
                     />
                 </section>
                 <Button 

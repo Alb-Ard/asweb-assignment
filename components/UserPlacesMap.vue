@@ -23,12 +23,13 @@
                     {{ place.name }}
                 </LTooltip>
             </LMarker>
+            <LPolyline v-if="connectPlaces && places.length >= 2" v-bind:lat-lngs="places.map(p => p.location)" color="var(--color-primary-400)" />
         </LMap>
         </div>
 </template>
 
 <script setup lang="ts">
-import { LMap, LTileLayer, LMarker, LTooltip } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker, LTooltip, LPolyline } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import { TooltipOptions } from "leaflet";
 
@@ -42,6 +43,7 @@ const props = defineProps<{
     places: MapPlace[],
     focusablePlaces?: boolean,
     showPlacesNames?: boolean,
+    connectPlaces?: boolean
     focusedId?: string,
 }>();
 
