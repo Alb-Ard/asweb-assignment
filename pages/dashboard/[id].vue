@@ -17,7 +17,7 @@ onMounted(() => whileLoadingAsync(isLoading, placesStore.fetchOneAsync(placeId),
 </script>
 
 <template>
-    <section>
+    <main>
         <p v-if="!!!place || authentication.userStore.userData === undefined">Loading...</p>
         <p v-else-if="authentication.userStore.userData === null">Login to see your place statistics</p>
         <p v-else-if="authentication.userStore.userData._id !== place.owner._id">Only the owner can see a place statistics!</p>
@@ -29,14 +29,19 @@ onMounted(() => whileLoadingAsync(isLoading, placesStore.fetchOneAsync(placeId),
             <p v-if="place.reviews.length <= 0" class="statistic-paragraph">This place doesn't have any reviews yet</p>
             <template v-else>
                 <ChartBoard :data="convertDataToChartValues(place.reviews.map(r => r.star))"></ChartBoard>
-                <p class="statistic-paragraph">Average rating: {{ averagePlaceRating.toFixed(2) }} <StarRating :rating="averagePlaceRating" /></p>
+                <p class="statistic-paragraph"><span>Average rating: {{ averagePlaceRating.toFixed(2) }}</span><StarRating :rating="averagePlaceRating" /></p>
                 <p class="statistic-paragraph">Ratings count: {{ place.reviews.length }}</p>
             </template>
         </template>
-    </section>
+    </main>
 </template>
 
 <style scoped>
+main {
+    height: max(100%, max-content);
+    padding-bottom: 1rem;
+}
+
 header {
     background-color: var(--color-primary-400);
     padding: 1rem;
@@ -46,8 +51,12 @@ header {
 }
 
 p {
-    margin-top: 2rem;
+    margin-block: 1rem;
     font-size: 1.1rem;
+}
+
+p > * {
+    margin-block: auto;
 }
 
 .statistic-paragraph {
@@ -55,6 +64,5 @@ p {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: center;
-    align-content: center;
 }
 </style>
