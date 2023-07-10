@@ -151,6 +151,10 @@ main > header {
     text-align: center;
 }
 
+main > header > div {
+    display: flex;
+}
+
 section:first-child {
     padding: 1rem;
     overflow: auto;
@@ -167,6 +171,10 @@ li {
 
 li:where(:not(:last-child)) {
     margin-bottom: 1rem;
+}
+
+.new-name-field {
+    padding: 0.25rem;
 }
 
 .itinerary-container {
@@ -211,10 +219,6 @@ li:where(:not(:last-child)) {
 
     main > header > div > * {
         margin-block: auto;
-    }
-
-    .new-name-field {
-        padding: 0.25rem;
     }
 
     .hidden-on-mobile {
