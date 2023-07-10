@@ -1,4 +1,6 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import axios from "axios";
+import { getApiUrl } from "lib/api";
+
 export default defineNuxtConfig({
     build: {
         transpile: ['chart.js']
@@ -27,5 +29,14 @@ export default defineNuxtConfig({
     modules: [
         '@pinia/nuxt',
         '@vueuse/nuxt'
-    ]
+    ],
+    ssr: false,
+    generate: {
+        routes: [
+            "/dashboard/[id]",
+            "/editpage/[id]",
+            "/place/[id]",
+            "/itinerary/[id]",
+        ]
+    }
 })
