@@ -17,7 +17,8 @@
                     v-bind:star-rating="place.reviews.reduce((p, c) => p + c.star, 0) / place.reviews.length"
                     v-on:click="e => { e.preventDefault(); handlePlaceClicked(place._id) }"
                 />
-                <deleteplace :remove-id="place._id" v-if="isEditable"></deleteplace>
+                <slot v-bind:place-id="place._id">
+                </slot>
             </li>
         </ol>
         <p v-else>No places found!</p>
@@ -31,7 +32,6 @@ import { vIntersectionObserver } from "@vueuse/components";
 const props = defineProps<{
     places: Place[],
     listClass?: string,
-    isEditable?: boolean
 }>();
 
 const searchTimeout = ref<NodeJS.Timeout>();
@@ -41,7 +41,7 @@ const intersectedPlacesCount = ref(0);
 
 const emit = defineEmits<{
     (event: "requestPlaces"): void
-    (event: "placeFocused", placeId: string): void
+    (event: "placeFocused", placeId: string): void,
 }>();
 
 const searchPlaces = (searchString: string) => nameFilter.value = searchString;
@@ -84,7 +84,7 @@ img {
     max-width: 100%;
 }
 
-input{
+input {
     padding: 1rem;
     width: 100%;
     font-family: inherit;

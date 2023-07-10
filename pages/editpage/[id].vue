@@ -38,7 +38,7 @@ watch(place, () => {
     image.value = place.value?.photoSrcs.at(0) ?? "";
     lat.value = place.value?.location[0];
     lon.value = place.value?.location[1];
-});
+}, { immediate: true });
 </script>
 
 <template>
@@ -83,6 +83,8 @@ watch(place, () => {
 <style scoped>
 main {
     height: 100%;
+    width: min(90vw, 64rem);
+    margin-inline: auto;
 }
 
 .hidden {

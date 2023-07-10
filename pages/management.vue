@@ -1,21 +1,10 @@
 <script setup lang="ts">
-import { PlaceReview } from "~/lib/types/place";
 import { initializeIfEmptyAsync, whileLoadingAsync } from "~/lib/dataStore";
-import Createplace from "~/components/createplace.vue";
-
 
 const authentication = useAuthentication();
 const placeStore = usePlacesStore();
 const places = computed(() => placeStore.places?.filter(p => p.owner._id === authentication.userStore.userData?._id));
 const isLoading = ref(false);
-
-function placeByMeanReview(reviews: PlaceReview[]): number {
-    return reviews.reduce((s, v) => s + v.star, 0) / reviews.length;
-}
-
-function concatPathWithPlaceId(id: string): string {
-    return "/dashboard/" + id;
-}
 
 watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whileLoadingAsync(isLoading, initializeIfEmptyAsync(() => placeStore.places, placeStore), null); }, { immediate: true });
 </script>
@@ -29,15 +18,22 @@ watch(authentication.userStore, newUserStore => { !!newUserStore.userData && whi
         </header>
         <UserPlacesSection 
             v-bind:places="places"
-            is-editable="true"
+            v-bind:is-editable="true"
             class="place-list-section"
             list-class="place-list"
             v-on:request-places="placeStore.fetchNextAsync()" 
-            v-on:place-focused="id => navigateTo('/dashboard/' + id)" 
-        />
+            v-on:place-focused="id => navigateTo('/dashboard/' + id)"
+        >
+            <template v-slot="slotProps">
+                <ButtonLink v-bind:full-width="true" class="place-action-button" v-bind:to="'/editpage/' + slotProps.placeId">
+                    <span class="fa fa-pencil"></span>
+                    Edit
+                </ButtonLink>
+                <DeletePlaceButton class="place-action-button" :remove-id="slotProps.placeId" />
+            </template>
+        </UserPlacesSection>
     </template>
-    <createplace></createplace>
-
+    <CreatePlaceFab />
 </template>
 <style scoped>
 h2 {
@@ -70,6 +66,10 @@ li {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+}
+
+.place-action-button {
+    margin-top: 0.5rem;
 }
 
 @media screen and (width <= 1024px) {
