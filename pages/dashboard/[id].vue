@@ -11,7 +11,8 @@ const place = computed(() => places.value?.find(p => p._id === placeId));
 const averagePlaceRating = computed(() => !!place.value ? (place.value.reviews.reduce((p, c) => p + c.star, 0)) / place.value.reviews.length : 0);
 const isLoading = ref(false);
 
-const convertDataToChartValues = (ratings: number[]) => ratings.reduce((v, r) => { v[r]++; return v; }, [0, 0, 0, 0, 0]);
+const convertDataToChartValues = (ratings: number[]) => ratings.reduce((v, r) => { v[r - 1]++; return v; }, [0, 0, 0, 0, 0]);
+
 
 onMounted(() => whileLoadingAsync(isLoading, placesStore.fetchOneAsync(placeId), null));
 </script>

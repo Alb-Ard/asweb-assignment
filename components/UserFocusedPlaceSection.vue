@@ -22,7 +22,7 @@
             </header>
             <ul class="place-images-list">
                 <li v-for="src in place.photoSrcs">
-                    <img v-bind:src="src" />
+                    <img alt="" class="place-image" v-bind:src="src" />
                 </li>
             </ul>
         </section>
@@ -131,6 +131,10 @@ form > fieldset > legend {
     display: flex;
     flex-wrap: nowrap;
     column-gap: 1rem;
+}
+
+.place-image {
+    height: 10rem;
 }
 
 .place-images-list > li {
